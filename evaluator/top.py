@@ -26,6 +26,9 @@ class TryClass:
 			x = utlis.getCornerPoints(rectCon[self.sz_num])
 			if x.size!=0:
 				cv2.drawContours(imgBiggestCountour, x, -1, (0, 255, 0), 15)
+				check_shape = cv2.drawContours(imgBiggestCountour, x, -1, (0, 255, 0), 15)
+				add_text = cv2.putText(img=check_shape, text="CAT", org=(150, 150), fontFace=cv2.FONT_HERSHEY_DUPLEX,
+					fontScale=4, color=(255, 0, 0), thickness=7)
 				# cv2.imshow('we', imgBiggestCountour)
 					
 				img_warped = utlis.reorder(x)
@@ -33,5 +36,5 @@ class TryClass:
 				pt2 = np.float32([[0, 0], [self.width, 0], [0, self.height], [self.width, self.height]])
 				matrix = cv2.getPerspectiveTransform(pt1, pt2)
 				imgWarpColored = cv2.warpPerspective(img, matrix, (self.width, self.height))
-				return imgWarpColored
+				return imgWarpColored, check_shape, add_text
 			

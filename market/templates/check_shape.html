@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %} HOME {% endblock %}
+{% block head %}
+	{{ super() }}
+	<style>
+		.pro-img{
+      position: relative;
+      width: 100%;
+      color: red;
+			background: green;
+		}
+		.info-label{
+			display: grid;
+			grid-template-columns: 60% 40%;
+		}
+		.ingo-right{
+			display grid;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+
+<div class="row">
+	<h3>Answer sheet</h3>
+	<br>
+	<hr>
+
+	<div class="col-9">
+		<img class="pro-img" src="{{ url_for('process.shape') }}" alt="{{ error }}">
+	</div>
+	<div class="col-3">
+
+	</div>
+
+</div>
+
+
+
+
+{% endblock %}

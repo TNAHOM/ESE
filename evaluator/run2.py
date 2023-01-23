@@ -35,6 +35,33 @@ answer2 = [
 cap = cv2.VideoCapture(0)
 cap.set(10, 120)
 
+def shape1():
+	while True:
+		success, img = cap.read()
+
+		if not success:
+			print('NOT SUCCESS')
+			return None
+		else:
+			try:
+				sliced_img = top.TryClass(img, 1, width, height).process_img()[2]
+				# final_img = process_answer_1.General(sliced_img, answer, questions, choices).func_choose()
+
+				ret, buffer = cv2.imencode('.jpg', sliced_img)
+				# result = final_img[0]
+				final_img = buffer.tobytes()
+				# print(result, 'result')
+				return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img + b'\r\n')
+
+			except ValueError as v_error:
+				v_error = 'No sheet detected'
+				return v_error
+			except IndexError as i_error:
+				i_error = 'Put the answer sheet Appropriately'
+				return i_error
+			except Exception as es:
+				print(es, 'gen exception')
+				return 'ERROR'
 
 def gen(answer=None):
 	while True:
@@ -45,13 +72,13 @@ def gen(answer=None):
 			return None
 		else:
 			try:
-				sliced_img = top.TryClass(img, 0, width, height).process_img()
+				sliced_img = top.TryClass(img, 1, width, height).process_img()[0]
 				final_img = process_answer_1.General(sliced_img, answer, questions, choices).func_choose()
 				
 				ret, buffer = cv2.imencode('.jpg', final_img[2])
 				result = final_img[0]
 				final_img = buffer.tobytes()
-				print(result)
+				print(result, 'result')
 				return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img + b'\r\n'), result
 			
 			except ValueError as v_error:
@@ -61,35 +88,35 @@ def gen(answer=None):
 				i_error = 'Put the answer sheet Appropriately'
 				return i_error
 			except Exception as es:
-				# print('gen exception')
+				print(es, 'gen exception')
 				return 'ERROR'
 
-# def gen2(answer=None):
-# 	while True:
-# 		success, img = cap.read()
-#
-# 		if not success:
-# 			print('Not success')
-# 		else:
-# 			try:
-#
-# 				sliced_img2 = top.TryClass(img, 0, width, height).process_img()
-# 				final_img2 = process_answer_1.General(sliced_img2, answer, questions, choices).func_choose()
-#
-# 				ret, buffer = cv2.imencode('.jpg', final_img2[2])
-# 				result2 = final_img2[0]
-# 				final_img21 = buffer.tobytes()
-# 				return(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img21 + b'\r\n'), result2, final_img21, final_img2
-#
-# 			except ValueError as v_error:
-# 				v_error = 'No sheet detected'
-# 				print(v_error)
-# 				return v_error
-# 			except IndexError as i_error:
-# 				print(i_error)
-# 				i_error = '2, Put the answer sheet Appropriately'
-# 				print(i_error)
-# 				return i_error
+def gen2(answer=None):
+	while True:
+		success, img = cap.read()
+
+		if not success:
+			print('Not success')
+		else:
+			try:
+
+				sliced_img2 = top.TryClass(img, 0, width, height).process_img()[0]
+				final_img2 = process_answer_1.General(sliced_img2, answer, questions, choices).func_choose()
+
+				ret, buffer = cv2.imencode('.jpg', final_img2[2])
+				result2 = final_img2[0]
+				final_img21 = buffer.tobytes()
+				return(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img21 + b'\r\n'), result2, final_img21, final_img2
+
+			except ValueError as v_error:
+				v_error = 'No sheet detected'
+				print(v_error)
+				return v_error
+			except IndexError as i_error:
+				print(i_error)
+				i_error = '2, Put the answer sheet Appropriately'
+				print(i_error)
+				return i_error
 			
 def qrcode_reader():
 	while True:
@@ -100,7 +127,7 @@ def qrcode_reader():
 			return None
 		else:
 			identifier = process_answer_1.General(img).qrcode_reader()
-			print(identifier, '-------------------')
+			# print(identifier, '-------------------')
 			return identifier
 			
 def ans_num(ans):
@@ -123,7 +150,7 @@ def connectionToDB(unique_sub=None):
 		cur_user.execute('SELECT * FROM base_user')
 		cur_exam.execute(f"SELECT * FROM base_exam WHERE unique_name='{unique_sub}'")
 		exam_id = cur_exam.fetchone()
-		# print(exam_id, '=-------------------------------=')
+		print(exam_id, '=-------------------------------=')
 		
 		result = cur.fetchall()
 		result_user = cur_user.fetchall()
@@ -140,7 +167,7 @@ def to_list(variable):
 
 def answer_lists():
 	unique_name = qrcode_reader()
-	# print(unique_name, '-=================--=------')
+	print(unique_name, '-=================--=------')
 	if unique_name is None:
 		return 'No Barcode Detected'
 	else:
@@ -157,7 +184,7 @@ def final_ans():
 	else:
 		answer_list = answer_lists()
 		to_num = ans_num(answer_list)
-		print(to_num, '$$$$$$$$$$$$$$$$$$$$$$$')
+		# print(to_num, '$$$$$$$$$$$$$$$$$$$$$$$')
 		return to_num
 #
 # f = final_ans()
