@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %} HOME {% endblock %}
+{% block head %}
+	{{ super() }}
+	<style>
+		.pro-img{
+      position: relative;
+      width: 300px;
+      color: red;
+			background: green;
+		}
+		.info-label{
+			display: grid;
+			grid-template-columns: 60% 40%;
+		}
+		.ingo-right{
+			display grid;
+		}
+	</style>
+{% endblock %}
+{% block body %}
+
+<div class="row">
+	<h3>Answer sheet</h3>
+	<br>
+	<hr>
+
+	<div class="col-9">
+		{% if display == 'true' %}
+			<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
+			<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
+		{% elif display == 'false' %}
+			<h2>No barcode detected</h2>
+		{% else %}
+			<h2>CONTACT NT</h2>
+		{% endif %}
+	</div>
+	<div class="col-3">
+		<form method="POST" class="form-register">
+			<label>Student Name:</label>
+			<input type="text" name="name" class="form-control" value="{{ request.form['name'] }}">
+
+			<input type="submit" value="submit">
+
+		</form>
+
+		{{ score }}
+	</div>
+
+</div>
+
+
+
+
+{% endblock %}
