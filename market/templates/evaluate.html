@@ -29,7 +29,7 @@
 	<div class="col-9">
 		{% if display == 'true' %}
 			<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
-			<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
+			<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
 		{% elif display == 'false' %}
 			<h2>No barcode detected</h2>
 		{% else %}

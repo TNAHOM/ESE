@@ -7,6 +7,7 @@
 		.pro-img{
       position: relative;
       width: 100%;
+
       color: red;
 			background: green;
 		}
@@ -30,6 +31,7 @@
 		<img class="pro-img" src="{{ url_for('process.shape') }}" alt="{{ error }}">
 	</div>
 	<div class="col-3">
+		<a href="{{ url_for('process.evaluate') }}" class="btn btn-primary">Next</a>
 
 	</div>
 
