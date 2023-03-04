@@ -37,76 +37,87 @@ class General:
 		
 		new_shape = np.reshape(new_boxes, (self.questions, self.choices-1))
 		# print('new_shape', new_shape)
-		# print('----')
-		
 		new_list = np.delete(new_shape, 0, 0)
 		new_shape2 = np.reshape(new_list, (self.questions-1, self.choices-1))
 		# print(new_shape2)
 		
-	
 		# FINDING INDEX VALUES OF MARKING
 		myIndex = []
 		# print(len(new_shape2))
-		for x in range(0, self.questions-1):
+		
+		disqualified_ans = []
+		for x in range(self.questions-1):
+			# sort for the higher darken choose
 			arr = new_shape2[x]
-			# print('-', arr)
 			sorted_arr = sorted(arr)
-			# print(sorted_arr)
-			
-			# .append(8) = no answer was given
-			# if sorted_arr[4] < 900:
-			# 	myIndex.append(8)
 			
 			# arr[3] = because the [3] is the second most colored
 			# possible 2 answer
 			if sorted_arr[3] > 1500:
+				
 				myIndex.append(9)
+				sorted_index_value = list(np.argsort(arr)[-2:])
+				# print(sorted_index_value, 'sorted')
+				disqualified_ans.append(sorted_index_value)
+				
 			else:
 				myIndexVal = np.where(arr==np.amax(arr))
 				# print(myIndexVal[0])
 				myIndex.append(myIndexVal[0][0])
-		# print(len(myIndex))
-		# grading = []
-		# print('----')
-		for x in range(0, self.questions-1):
+		# print(disqualified_ans, 'incorrect index')
+
+		incorrect_ans=[]
+		for x in range(self.questions-1):
+			# print(x)
 			if self.answer[x]==myIndex[x]:
+				# print(x)
 				self.grade.append(1)
+			# possible two answers
 			elif myIndex[x] == 9:
 				self.grade.append(2)
-			elif myIndex[x] == 8:
-				self.grade.append(3)
 			else:
 				self.grade.append(0)
-				
-		total_sum = []
+				incorrect_ans.append(myIndex[x])
+
 		disqualified_que = []
-		no_answer_written = []
+		incorrect_que = []
+		
+		total_sum = []
 		for x in range(0, len(self.grade)):
 			if self.grade[x] == 1:
 				total_sum.append(self.grade[x])
+			elif self.grade[x] == 0:
+				incorrect_que.append(x+1)
 			elif self.grade[x] == 2:
 				disqualified_que.append(x+1)
-			elif self.grade[x] == 3:
-				no_answer_written.append(x+1)
-				
+
+		# print(incorrect_ans, 'incorrect ans')
+		# print(disqualified_que, 'dis')
+		# print(incorrect_que, 'incorrect que')
+
 		# print(self.answer)
 		imgResult = self.img.copy()
 		imgResult = utlis.showAnswers(imgResult, myIndex, self.grade, self.answer, self.questions, self.choices)
-		# cv2.imshow('qw', imgResult)
 		
 		# will allow to print by the number of question
 		# total_grade = self.grade[:self.questions]
-		# cv2.imshow('ko', imgResult)
-		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, no_answer_written
+	
+		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, incorrect_que, incorrect_ans
 
 	def qrcode_reader(self):
 		try:
 			for barcode in decode(self.img):
 				myData = barcode.data.decode('utf-8')
+				# print('idk', myData)
 				return myData
+			else:
+				print('dont know why qrcode')
 		# 	when it cant grab the frame
 		except -1072875772:
 			print('cant grab')
 			return 'cant grab'
 		except Exception as ed:
 			print('process_answer qr', ed)
+		
+		except:
+			print('idk')
