@@ -22,7 +22,6 @@ cap = cv2.VideoCapture(1)
 def shape1():
 	while True:
 		success, img = cap.read()
-
 		if not success:
 			print('NOT SUCCESS shape')
 			return None
@@ -46,6 +45,7 @@ def shape1():
 				return 'ERROR'
 
 def gen(answer):
+	# print('helloo++')
 	while True:
 		success, img = cap.read()
 		
@@ -61,8 +61,6 @@ def gen(answer):
 				final_img_buffer = buffer.tobytes()
 				incorrect_que = final_img[5]
 				incorrect_ans = final_img[6]
-				# print(incorrect_que, '1.incorrect_que')
-				# print(incorrect_ans, 'incorrect_ans')
 				return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), \
 				       result, incorrect_que, incorrect_ans
 			
@@ -77,6 +75,7 @@ def gen(answer):
 				return 'ERROR'
 
 def gen2(answer=None):
+	# print('HIII')
 	while True:
 		success, img = cap.read()
 

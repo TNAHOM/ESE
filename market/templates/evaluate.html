@@ -22,19 +22,13 @@
 {% block body %}
 
 <div class="row">
-	<h3>Answer sheet</h3>
+	<h3>Answer sheet{{display}}</h3>
 	<br>
 	<hr>
 
 	<div class="col-9">
-		{% if display == 'true' %}
-			<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
-			<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
-		{% elif display == 'false' %}
-			<h2>No barcode detected</h2>
-		{% else %}
-			<h2>CONTACT NT</h2>
-		{% endif %}
+		<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
+		<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
 	</div>
 	<div class="col-3">
 		<form method="POST" class="form-register">

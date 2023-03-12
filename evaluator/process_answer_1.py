@@ -70,7 +70,6 @@ class General:
 		for x in range(self.questions-1):
 			# print(x)
 			if self.answer[x]==myIndex[x]:
-				# print(x)
 				self.grade.append(1)
 			# possible two answers
 			elif myIndex[x] == 9:
@@ -110,14 +109,5 @@ class General:
 				myData = barcode.data.decode('utf-8')
 				# print('idk', myData)
 				return myData
-			else:
-				print('dont know why qrcode')
-		# 	when it cant grab the frame
-		except -1072875772:
-			print('cant grab')
-			return 'cant grab'
 		except Exception as ed:
 			print('process_answer qr', ed)
-		
-		except:
-			print('idk')
