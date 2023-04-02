@@ -13,7 +13,6 @@ def school():
 @views.route('/login', methods=['GET', 'POST'])
 def login():
 	form = LoginForm()
-	
 	if form.validate_on_submit():
 		attempted_user = User.query.filter_by(email=form.email.data).first()
 		if attempted_user and attempted_user.check_password(
@@ -23,8 +22,9 @@ def login():
 			flash(f'You have successfully Logged in as: {attempted_user.username}', category='success')
 			return redirect(url_for(f'views.{current_user.role.lower()}'))
 		else:
-			print(form.errors)
+			print(form.errors, 'ddddd')
 			flash('Username or password doesnt match! Please try again', category='danger')
+			
 		
 	return render_template('login.html', form=form)
 
@@ -33,9 +33,3 @@ def logout():
 	logout_user()
 	flash('You have been logged out', category='info')
 	return redirect(url_for('views.login'))
-
-
-
-
-
-

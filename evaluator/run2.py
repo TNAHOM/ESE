@@ -4,7 +4,6 @@ from evaluator import top, process_answer_1
 import psycopg2, psycopg2.extras
 
 #####################
-# path = 'C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\PROJECT\Flask\prototype_1\website\static\img\bn (2).jpg'
 width, height = 738, 984
 width_tf, height_tf = 550, 770
 
@@ -15,6 +14,7 @@ choices_tf = 2
 ############################
 
 num_str = {'A': 0,'B': 1,'C': 2,'D': 3,'E': 4}
+num_str_tf = {'true': 1, 'false':0}
 
 #######################
 cap = cv2.VideoCapture(1)
@@ -60,9 +60,10 @@ def gen(answer):
 				result = final_img[0]
 				final_img_buffer = buffer.tobytes()
 				incorrect_que = final_img[5]
+				disqualified_que = final_img[4]
 				incorrect_ans = final_img[6]
 				return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), \
-				       result, incorrect_que, incorrect_ans
+				       result, incorrect_que, incorrect_ans, disqualified_que
 			
 			except ValueError as v_error:
 				v_error = 'No sheet detected'
@@ -93,7 +94,7 @@ def gen2(answer=None):
 				incorrect_que = final_img[5]
 				incorrect_ans = final_img[6]
 				# print(incorrect_que, '2.incorrect_que')
-				# print(incorrect_ans, 'incorrect_ans')
+				# print(result, 'result')
 				return(b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), \
 				      result, incorrect_que, incorrect_ans
 
@@ -104,7 +105,35 @@ def gen2(answer=None):
 			except IndexError as i_error:
 				i_error = '2, Put the answer sheet Appropriately'
 				return i_error
-#
+
+def gen_tf(answer):
+	while True:
+		success, img = cap.read()
+		if not success:
+			print('Not success tf')
+			return None
+		else:
+			try:
+				sliced_img = top.TryClass(img, 2, width_tf, height_tf).process_img()[0]
+				final_img = process_answer_1.General(sliced_img, answer, 11, 2).func_tf()
+				
+				ret, buffer = cv2.imencode('.jpg', final_img[2])
+				# result = final_img[0]
+				final_img_buffer = buffer.tobytes()
+				# incorrect_que = final_img[5]
+				# incorrect_ans = final_img[6]
+				# print(incorrect_que, '2.incorrect_que')
+				# print(result, 'result')
+				return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n')
+		
+			except ValueError as v_error:
+				v_error = 'No sheet detected'
+				# print(v_error)
+				return v_error
+			except IndexError as i_error:
+				i_error = '2, Put the answer sheet Appropriately'
+				return i_error
+
 def qrcode_reader():
 	while True:
 		success, img = cap.read()
@@ -124,6 +153,14 @@ def ans_num(ans):
 				answer_list.append(y)
 	return answer_list
 
+def ans_num_tf(ans):
+	answer_list = []
+	for x in ans:
+		for z, y in num_str_tf.items():
+			if x == z:
+				answer_list.append(y)
+	return answer_list
+	
 def connectionToDB(unique_sub):
 	try:
 		conn =  psycopg2.connect(host='localhost', database='postgres', user='postgres', password='243313')
@@ -144,31 +181,33 @@ def connectionToDB(unique_sub):
 
 	except Exception as er:
 		return er
-#
+
 def to_list(variable):
 	x = variable.replace(',', '').replace("'", '').replace(' ', '').replace('[', '').replace(']', '')
 	return x
-#
+def tf_to_list(tf_variable):
+	y = tf_variable.replace("'", '').replace(' ', '').replace('[', '').replace(']', '').split(',')
+	return y
+
 def answer_lists(unique_name):
 	if unique_name is None:
 		return 'No Barcode Detected'
 	else:
-		# print(unique_name, '000000000000000000000')
-		# print(connectionToDB(unique_name))
 		connection = connectionToDB(unique_name)[7]
+		# print('----------')
 		# print(connection, 'connection')
-		# print(connection)
 		answer_list = list(to_list(connection[6]))
-		# print(answer_list, 'answer_list')
-		return answer_list
-#
+		answer_list_tf = list(tf_to_list(connection[9]))
+		return answer_list, answer_list_tf
+
 def final_ans(qrcode):
 	if answer_lists(qrcode) == 'No Barcode Detected':
 		# print(answer_lists(qrcode), '999999999')
 		return 'No Barcode Detected'
 	else:
-		answer_list = answer_lists(qrcode)
-		# print(len(answer_list))
+		answer_list = answer_lists(qrcode)[0]
 		to_num = ans_num(answer_list)
-		# print(to_num, '$$$$$$$$$$$$$$$$$$$$$$$')
-		return to_num
+
+		answer_list_tf = answer_lists(qrcode)[1]
+		to_num_tf = ans_num_tf(answer_list_tf)
+		return to_num, to_num_tf

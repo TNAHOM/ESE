@@ -6,13 +6,13 @@
 	<style>
 		.pro-img{
       position: relative;
-      width: 300px;
+      width: 250px;
       color: red;
 			background: green;
 		}
 		.info-label{
 			display: grid;
-			grid-template-columns: 60% 40%;
+			grid-template-columns: 70% 30%;
 		}
 		.ingo-right{
 			display grid;
@@ -29,6 +29,7 @@
 	<div class="col-9">
 		<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
 		<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
+		<img class="pro-img" src="{{ url_for('process.process_img_tf') }}" alt="{{ error }}">
 	</div>
 	<div class="col-3">
 		<form method="POST" class="form-register">

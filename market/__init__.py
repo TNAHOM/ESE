@@ -22,7 +22,9 @@ login_manager.login_message_category = 'info'
 # top of app, db this will raise a circular loop error
 from .views import views
 from .process import process
+from .process_folder import process_folder
 
 app.register_blueprint(views, url_prefix='/')
 app.register_blueprint(process, url_prefix='/')
+app.register_blueprint(process_folder, url_prefix='/')
 

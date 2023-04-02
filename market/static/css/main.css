@@ -1,3 +1,7 @@
 body{
   background: black:
 }
+
+.file{
+  display: flex;
+}
