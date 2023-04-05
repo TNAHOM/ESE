@@ -13,13 +13,16 @@
   <body style="background: #212121; color:white;">
 
 	{% include 'navbar.html' %}
-  {% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div  class="alert alert-{{ messages[-1][0] }} p-2">
-	    {{ messages[-1][1] }}
-    </div>
-  {% endif %}
-  {% endwith %}
+	{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				{% for category, message in messages %}
+					<div class="alert alert-{{ messages[-1][0] }} p-2">
+						{{message}}
+					</div>
+				{% endfor %}
+			{% endif %}
+		{% endwith %}
+
   <div class="container">
 	{% block body %}
 

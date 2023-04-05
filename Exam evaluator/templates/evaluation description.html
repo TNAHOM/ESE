@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+{% block head %}
+	{{ super() }}
+	<style>
+		.pro-img{
+      position: relative;
+      width: 250px;
+      height: 700px;
+      color: red;
+			background: green;
+		}
+		.info-label{
+			display: grid;
+			grid-template-columns: 70% 30%;
+		}
+		.ingo-right{
+			display grid;
+		}
+
+		.images{
+			display: flex;
+			gap: 1rem;
+		}
+	</style>
+{% endblock %}
+
+{% block body%}
+
+<div class="position-relative overflow-hidden p-3 p-md m-md-3 text-center bg-dark" style="color: white;">
+	<div class="col-md-5 p-lg-5 mx-auto my-5">
+		<h1 class="display-4 font-weight-normal">Evaluation description</h1>
+
+		{% for x in names %}
+		<p>{{x}}, {{name}}, names, hi</p>
+		<p class="lead font-weight-normal">{{names[x]}} --- {{score[x]}}</p>
+		{% endfor %}
+	</div>
+	<div class="product-devices box-shadow d-none d-md-block"></div>
+	<div class="product-devices product-device-2 box-shadow d-none d-md-block"></div>
+</div>
+
+{% endblock %}

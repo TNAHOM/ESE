@@ -51,59 +51,55 @@ class AllInOneFolder:
 def upload_folder():
 	scores = []
 	names = []
-	
+	num_saved = 0
+	num_existed = 0
 	if request.method=='POST':
 		display = True
-		
+
 		directorate = request.form.get('file')
 		for x in os.listdir(directorate):
 			# print(x, x[:-4])
+			user_name = x[:-4]
 			img = cv2.imread(directorate + '\\' + x)
 			qrcode = run3.qrcode_reader(img)
-			print(qrcode, x)
 			all_in_one = AllInOneFolder(img, qrcode)
 			# [:-4] for excluding .jpg
 			to_db = run2.connectionToDB(qrcode)
-			names.append(x[:-4])
 			score = all_in_one.folder()[0][1] + all_in_one.folder_2()[0][1]
-			scores.append(score)
+			# print(x[:-4], score, qrcode)
 			
-			for y in range(len(to_db[1])):
-				data = to_db[1][y]
-				name = data[10]
-				if type(names) is list:
-					# for name in names:
-					if data[10] in names:
-						my_uuid = uuid.UUID(data[9])
-						wrong_ans = 'placeholder'
-						new_uuid = uuid.uuid4()
-						to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-							(qrcode, my_uuid))
-						does_exist = to_db[3].fetchone()
-						# print(does_exist, 'exist')
-						if does_exist is None:
-							qrcode2 = run3.qrcode_reader(img)
-							insert_record = (new_uuid, score, data[9], qrcode, 'true', datetime.date.today(), str(wrong_ans))
-							to_db[4].execute(to_db[2], insert_record)
-							to_db[5].commit()
-							print(name, score, qrcode2)
+			for user in to_db[1]:
+				if user[10] == user_name and user[12] == 'Student':
+					print(user_name, user[10])
+					new_uuid = uuid.uuid4()
+					my_uuid = uuid.UUID(user[9])
+					to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
+						(qrcode, my_uuid))
+					does_exist = to_db[3].fetchone()
+					# print(does_exist)
+					if does_exist is None:
+						insert_record = (new_uuid, score, user[9], qrcode, 'true', datetime.date.today(), str('wrong_ans'))
+						to_db[4].execute(to_db[2], insert_record)
+						to_db[5].commit()
+						num_saved+=1
+						names.append(user[10])
+						scores.append(score)
+						print('done')
 
-							flash(f'Successfully saved :) for {name}', category='success')
-							# print(name, 'Successfully saved :)')
-						elif does_exist:
-							# print(name, 'data already saved')
-							flash(f'Data Already Saved', category='danger')
-					
-					elif data[10] != names:
-						# # print(name, 'Name does not exist')
-						# flash(f'Name does not exist', category='danger')
-						continue
+					elif does_exist:
+						num_existed+=1
+						print(f'data already existed of {user}')
 					else:
-						print('DONT KNOW THE ERROR')
-		# print(names, scores, new_uuid)
+						print('Dont know the error')
+				else:
+					print('User Doesn/"t exist')
+		flash(f'{num_saved} Has been saved', category='success')
+		flash(f'{num_existed} Has already been registered', category='danger')
 		
-		return redirect(url_for('views.school'))
-
-	else:
+		return render_template('evaluation description.html', display=display, score=scores, names=range(len(names)),
+			name=names, num_saved=num_saved, num_existed=num_existed)
+	
+	
+	elif request.method == 'GET':
 		display = False
-	return render_template('upload folder.html', display=display, score=scores, name=names, names=range(len(names)))
+		return render_template('upload folder.html', display=display, score=scores, name=names, names=range(len(names)))

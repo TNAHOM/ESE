@@ -71,14 +71,13 @@ def connectionToDB(unique_sub):
 		cur_exam = conn.cursor()
 		
 		cur.execute('SELECT * FROM base_exam')
-		student = 'STUDENT'
-		cur_user.execute(f'SELECT * FROM base_user')
+		cur_user.execute(f"SELECT * FROM base_user WHERE role='Student'")
 		cur_exam.execute(f"SELECT * FROM base_exam WHERE id='{unique_sub}'")
 		exam_id = cur_exam.fetchone()
-		
+
 		result = cur.fetchall()
 		result_user = cur_user.fetchall()
-		# print(result_user)
+		# print(result_user, 'user')
 		insert_data_from = """ INSERT INTO base_score (ID, SCORE, STUDENT_SCORE_ID, SUBJECT_ID, DISPLAY, FINISHED, INCORRECT_ANS) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
 		return result, result_user, insert_data_from, cur_exist, cur, conn, cur_exam, exam_id
 	except Exception as er:

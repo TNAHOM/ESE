@@ -2,6 +2,9 @@ import cv2
 from evaluator import utlis
 import numpy as np
 from pyzbar.pyzbar import decode
+from pdf417decoder import PDF417Decoder
+from PIL import Image as PIL
+from pyzbar.pyzbar import ZBarSymbol
 
 
 class General:
@@ -161,10 +164,19 @@ class General:
 	
 	
 	def qrcode_reader(self):
+		# decoder = PDF417Decoder(self.img)
+		# print(decoder.decode())
+		# if (decoder.decode() > 0):
+		# 	decoded = decoder.barcode_data_index_to_string(0)
+		# 	print(decoded)
+		# decode(self.img, symbols=[ZBarSymbol.QRCODE])
+		# qcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
+		# for x in qcode:
+		# 	print(x.data.decode('utf-8'))
 		try:
-			for barcode in decode(self.img):
-				myData = barcode.data.decode('utf-8')
-				# print('idk', myData)
+			qrcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
+			for x in qrcode:
+				myData = x.data.decode('utf-8')
 				return myData
 		except Exception as ed:
 			print('process_answer qr', ed)
