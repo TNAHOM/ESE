@@ -159,10 +159,11 @@ def showAnswers_tf(img, myIndex, grading, answer, questions=None, choices=None):
 	secH = int(img.shape[0] / questions)
 	
 	for x in range(0, questions-1):
+		# print(x)
 		myAns = myIndex[x]
 
 		cX = (myAns * secW) + secW // 2  # Find the center value
-		cY = secH + (x * secH)
+		cY = secH + (x * secH) + secH // 2
 		dX = (1 * secW)
 		if grading[x]==1:
 			myColor = (0, 255, 0)
@@ -171,13 +172,14 @@ def showAnswers_tf(img, myIndex, grading, answer, questions=None, choices=None):
 			myColor = (255, 255, 255)
 			cv2.circle(img, (dX, cY), 35, myColor, cv2.FILLED)
 		elif grading[x]==3:
-			myColor = (255, 255, 0)
-			cv2.circle(img, (dX, cY), 35, myColor, cv2.FILLED)
+			myColor = (255, 255, 255)
+			cv2.circle(img, (dX, cY), 18, myColor, cv2.FILLED)
 		else:
-			myColor = (255, 0, 0)
+			myColor = (0, 255, 0)
 			correctAns = answer[x]
+
 			# cv2.rectangle(img, (myAns * (secW), x * secH), ((myAns * (secW)) + (secW), (x * secH) + secH), myColor, cv2.FILLED)
-			cv2.circle(img, ((correctAns * secW) + secW // 2, (x * secH) + secH // 2), 30, (0, 255, 0), cv2.FILLED)
+			cv2.circle(img, ((correctAns * secW) + secW // 2, ((x+1) * secH) + secH // 2), 30, (0, 255, 0), cv2.FILLED)
 		cv2.circle(img, (cX, cY), 30, myColor, cv2.FILLED)
 	return img
 

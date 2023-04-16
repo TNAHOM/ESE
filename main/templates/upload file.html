@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% block title %} Home {% endblock %}
+
+
+{% block head %}
+	{{ super() }}
+	<style>
+		.pro-img{
+      position: relative;
+      width: 250px;
+      height: 700px;
+      color: red;
+			background: green;
+		}
+		.info-label{
+			display: grid;
+			grid-template-columns: 70% 30%;
+		}
+		.ingo-right{
+			display grid;
+		}
+
+		.images{
+			display: flex;
+			gap: 1rem;
+		}
+	</style>
+{% endblock %}
+
+{% block body%}
+
+<div class="position-relative overflow-hidden p-3 p-md m-md-3 text-center bg-dark" style="color: white;">
+	<div class="col-md-5 p-lg-5 mx-auto my-5">
+		<h1 class="display-4 font-weight-normal">Upload File/Folder</h1>
+		<p class="lead font-weight-normal">Start evaluating exams by clicking one of two buttons.</p>
+
+		{% if display == False %}
+			<form method="POST" enctype="multipart/form-data">
+				<div class="file">
+					<label for="file">Select folder:</label>
+					<input type="text" id="file" name="file" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan\Dagim Bedlu Mamo.jpg"/>
+				</div>
+				<input type="submit" value="Evaluate" class="btn btn-primary" multiple />
+			</form>
+		{% elif display == True %}
+			<div class="images">
+				<img class="pro_img" src="{{img1}}"/>
+				<img class="pro_img" src="{{img2}}"/>
+				<img class="pro-img" src="{{ url_for('process_file.process_img1') }}">
+
+			</div>
+		{% endif %}
+	</div>
+	<div class="product-devices box-shadow d-none d-md-block"></div>
+	<div class="product-devices product-device-2 box-shadow d-none d-md-block"></div>
+</div>
+
+{% endblock %}
+<!--				<img class="pro-img" src="{{ url_for('process.process_img_folder_2') }}">-->

@@ -21,10 +21,10 @@ login_manager.login_message_category = 'info'
 # Because in views we import app and db so if we make an import from this page at the
 # top of app, db this will raise a circular loop error
 from .views import views
-from .process import process
-from .process_folder import process_folder
+from .process_live import process
+from .process_file import process_file
 
 app.register_blueprint(views, url_prefix='/')
 app.register_blueprint(process, url_prefix='/')
-app.register_blueprint(process_folder, url_prefix='/')
+app.register_blueprint(process_file, url_prefix='/')
 

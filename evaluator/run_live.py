@@ -27,7 +27,7 @@ def shape1():
 			return None
 		else:
 			try:
-				sliced_img0 = top.TryClass(img, 0, 1200, 900).process_img()[1]
+				sliced_img0 = top.TryClass(img, 0, width, height).process_img()[1]
 				ret, buffer0 = cv2.imencode('.jpg', sliced_img0)
 				final_img0 = buffer0.tobytes()
 				
@@ -45,7 +45,6 @@ def shape1():
 				return 'ERROR'
 
 def gen(answer):
-	# print('helloo++')
 	while True:
 		success, img = cap.read()
 		

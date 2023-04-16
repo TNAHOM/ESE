@@ -1,47 +1,36 @@
 import datetime
 
 from flask import render_template, redirect, url_for, flash, request, Blueprint, Response
-from evaluator import run2, run3
+from evaluator import run_live, run_folder
 from flask_login import login_required
 import uuid
-import os
-import cv2
 
-
-process = Blueprint('process', __name__)
+process = Blueprint('process_live', __name__)
 
 class AllInOne:
 	def __init__(self):
-		self.answersheet = run2.qrcode_reader()
-		self.answer = run2.final_ans(self.answersheet)
+		self.answersheet = run_live.qrcode_reader()
+		self.answer = run_live.final_ans(self.answersheet)
 
-		self.answersheet_folder = run3.qrcode_reader()
-		self.answer_folder = run3.final_ans(self.answersheet_folder)
+		self.answersheet_folder = run_live.qrcode_reader()
+		self.answer_folder = run_live.final_ans(self.answersheet_folder)
 		# print(run3.gen_folder(self.answer_folder[0])[1], self.answersheet_folder)
 	def first_choose(self):
-		gen = run2.gen(self.answer[0])
+		gen = run_live.gen(self.answer[0])
 		return gen, self.answer[0]
 	
 	def second_choose(self):
-		gen = run2.gen2(self.answer[0])
+		gen = run_live.gen2(self.answer[0])
 		return gen, self.answer[0]
 
 	@staticmethod
 	def check_shape():
-		gen = run2.shape1()
+		gen = run_live.shape1()
 		return gen
 	
 	def true_false(self):
-		gen = run2.gen_tf(self.answer[1])
+		gen = run_live.gen_tf(self.answer[1])
 		return gen, self.answer[1]
-	
-	def folder(self):
-		gen = run3.gen_folder(self.answer_folder[0])
-		return gen, self.answer_folder[0]
-	
-	def folder_2(self):
-		gen = run3.gen_folder_2(self.answer_folder[0])
-		return gen, self.answer_folder[0]
 
 ############ LIVE CAM ############
 
@@ -74,7 +63,7 @@ def process_img_tf():
 
 @process.route('/streams4')
 def shape():
-	gen = run2.shape1()
+	gen = run_live.shape1()
 	return Response(gen, mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @process.route('/check')
@@ -120,7 +109,7 @@ def evaluate():
 			score = parameters_int[0] + parameters_int[1]
 			qr_code = all_in_one.answersheet
 			# print(qr_code)
-			to_db = run2.connectionToDB(qr_code)
+			to_db = run_live.connectionToDB(qr_code)
 			# print(len(to_db[1]))
 			# for x in to_db[7]:
 				# for y in x:

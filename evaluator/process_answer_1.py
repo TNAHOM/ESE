@@ -2,8 +2,6 @@ import cv2
 from evaluator import utlis
 import numpy as np
 from pyzbar.pyzbar import decode
-from pdf417decoder import PDF417Decoder
-from PIL import Image as PIL
 from pyzbar.pyzbar import ZBarSymbol
 
 
@@ -112,29 +110,25 @@ class General:
 			myPixelVal[countR][countC] = totalPixels
 			countC += 1
 			if countC==self.choices: countR += 1;countC = 0
-		
 		new_list = np.delete(myPixelVal, 0, 0)
 		# for x in new_list:
 		# 	print(x, 'pixel')
-
-		# new_shape2 = np.reshape(new_list, (self.questions - 1, self.choices))
+		
 		# FINDING INDEX VALUES OF MARKING
 		myIndex = []
 
 		for x in range(0, self.questions - 1):
 			arr = new_list[x]
-			# print(x, arr)
 			sorted_arr = sorted(arr)
-			# print('sorted', sorted_arr)
-			
+			# print(sorted_arr, 'sorted_ar')
 			if sorted_arr[0] > 6000:
 				myIndex.append(9)
 			else:
 				myIndexVal = np.where(arr==np.amax(arr))
 				myIndex.append(myIndexVal[0][0])
-		# print(myIndex, 'myIndex')
+
 		for x in range(0, self.questions - 1):
-			print(self.answer[x], myIndex[x])
+			# print(self.answer[x], myIndex[x])
 			if self.answer[x]==myIndex[x]:
 				self.grade.append(1)
 			elif myIndex[x]==9:
@@ -156,10 +150,6 @@ class General:
 
 		imgResult = self.img.copy()
 		imgResult = utlis.showAnswers_tf(imgResult, myIndex, self.grade, self.answer, self.questions, self.choices)
-		# cv2.imshow('qw', imgResult)
-		
-		# will allow to print by the number of question
-		# cv2.imshow('ko', imgResult)
 		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, no_answer_given
 	
 	

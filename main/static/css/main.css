@@ -1,7 +1,27 @@
 body{
   background: black:
+  color: red;
 }
 
 .file{
   display: flex;
+}
+
+.body{
+  background: #212529;
+  padding-top: 2.5rem;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+
+.body .existed {
+  position: relative;
+}
+
+.body .existed table{
+  width: 50%;
+  color: white;
 }

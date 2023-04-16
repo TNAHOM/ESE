@@ -10,6 +10,12 @@ views = Blueprint('views', __name__)
 def school():
 	return render_template('home.html')
 
+@views.route('/disabled')
+def disabled():
+	# LIVE url -> process_live.check_shape
+	flash('This option is temporarily disabled', category='info')
+	return render_template('home.html')
+
 @views.route('/login', methods=['GET', 'POST'])
 def login():
 	form = LoginForm()
