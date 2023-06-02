@@ -34,20 +34,21 @@
 	<div class="body">
 		<div class="new">
 			<h3>New Registerd score</h3>
-			{% if names %}
-			<table>
-				<tr>
-					<th>Name</th>
-					<th>Score</th>
-				</tr>
-				{% for x in names %}
+			{% if new_result %}
+			<div class="table">
+				<table>
 					<tr>
-						<td class="lead font-weight-normal">{{names[x]}}</td>
-						<td class="lead font-weight-normal">{{score[x]}}</td>
+						<th>Name</th>
+						<th>Score</th>
 					</tr>
-				{% endfor %}
-
-			</table>
+					{% for name, score in new_result.items() %}
+						<tr>
+							<td class="lead font-weight-normal">{{name}}</td>
+							<td class="lead font-weight-normal">{{score}}</td>
+						</tr>
+					{% endfor %}
+				</table>
+			</div>
 			{% else %}
 				<p class="lead font-weight-normal">All the sheet has been already been registered</p>
 			{% endif %}
@@ -62,10 +63,10 @@
 						<th>Name</th>
 						<th>Score</th>
 					</tr>
-					{% for key, value in existed.items() %}
+					{% for user, score in existed.items() %}
 						<tr>
-							<td>{{key}}</td>
-							<td>{{value}}</td>
+							<td>{{user}}</td>
+							<td>{{score}}</td>
 						</tr>
 					{% endfor %}
 				</table>

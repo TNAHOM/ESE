@@ -120,7 +120,7 @@ def showAnswers(img, myIndex, grading, answer, questions=None, choices=None):
 	secW = int(img.shape[1] / choices)
 	# print(img.shape[0])
 	secH = int(img.shape[0] / questions)
-	
+	print(grading)
 	for x in range(0, questions-1):
 		# print('questions', questions)
 		myAns = myIndex[x]
@@ -128,26 +128,28 @@ def showAnswers(img, myIndex, grading, answer, questions=None, choices=None):
 		cX = secW + (myAns * secW) + secW // 2  # Find the center value
 		cY = secH + (x * secH) + secH // 2
 		dx = secW + ( -1* secW) + secW//2
+		# print(grading, 'grading')
+		if grading[x]!=-1:
 		
-		if grading[x]==1:
-			# print('Grd in utls', grading[x])
-			myColor = (0, 255, 0)
-			# cv2.rectangle(img, (myAns*(secW), x*secH), ((myAns*(secW))+secW, (x*secH)+secH), myColor, cv2.FILLED)
-			cv2.circle(img, (cX, cY), 14, myColor, cv2.FILLED)
-		# cv2.rectangle(img, cX, cY, myColor, cv2.FILLED)
-		elif grading[x]==2:
-			myColor = (255, 255, 255)
-			cv2.circle(img, (dx, cY), 18, myColor, cv2.FILLED)
-		elif grading[x]==3:
-			myColor = (255, 255, 0)
-			cv2.circle(img, (dx, cY), 18, myColor, cv2.FILLED)
-		else:
-			myColor = (0, 255, 0)
-			correctAns = answer[x]
-			# cv2.rectangle(img, (myAns * (secW), x * secH), ((myAns * (secW)) + (secW), (x * secH) + secH), myColor, cv2.FILLED)
-			cv2.circle(img, (secW + (correctAns * secW) + secW // 2, secH + (x * secH) + secH // 2), 10, (255, 0, 0), cv2.FILLED)
-			# cv2.circle(img, (cX, cY), 18, (0, 255, 0), cv2.FILLED)
-		cv2.circle(img, (cX, cY), 9, myColor, cv2.FILLED)
+			if grading[x]==1:
+				# print('Grd in utls', grading[x])
+				myColor = (0, 255, 0)
+				# cv2.rectangle(img, (myAns*(secW), x*secH), ((myAns*(secW))+secW, (x*secH)+secH), myColor, cv2.FILLED)
+				cv2.circle(img, (cX, cY), 14, myColor, cv2.FILLED)
+			# cv2.rectangle(img, cX, cY, myColor, cv2.FILLED)
+			elif grading[x]==2:
+				myColor = (255, 255, 255)
+				cv2.circle(img, (dx, cY), 18, myColor, cv2.FILLED)
+			elif grading[x]==3:
+				myColor = (255, 255, 0)
+				cv2.circle(img, (dx, cY), 18, myColor, cv2.FILLED)
+			elif grading[x]==0:
+				myColor = (0, 255, 0)
+				correctAns = answer[x]
+				# cv2.rectangle(img, (myAns * (secW), x * secH), ((myAns * (secW)) + (secW), (x * secH) + secH), myColor, cv2.FILLED)
+				cv2.circle(img, (secW + (correctAns * secW) + secW // 2, secH + (x * secH) + secH // 2), 10, (255, 0, 0), cv2.FILLED)
+				# cv2.circle(img, (cX, cY), 18, (0, 255, 0), cv2.FILLED)
+			cv2.circle(img, (cX, cY), 9, myColor, cv2.FILLED)
 	return img
 
 

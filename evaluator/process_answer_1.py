@@ -13,6 +13,17 @@ class General:
 		self.questions = questions
 		self.choices = choices
 	
+	def qrcode_reader(self):
+		try:
+			qrcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
+			print(qrcode, 'qrcode')
+			for x in qrcode:
+				myData = x.data.decode('utf-8')
+				print(myData, '====')
+				return myData
+		except Exception as ed:
+			print('process_answer qr', ed)
+
 	def func_choose(self):
 		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
 		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
@@ -50,31 +61,30 @@ class General:
 		for x in range(self.questions-1):
 			# sort for the higher darken choose
 			arr = new_shape2[x]
-			sorted_arr = sorted(arr)
-			# print(sorted_arr)
-			
-			# arr[3] = because the [3] is the second most colored
-			# possible 2 answer
-			if sorted_arr[3] > 1500:
-				myIndex.append(9)
-				sorted_index_value = list(np.argsort(arr)[-2:])
-				# print(sorted_index_value, 'sorted')
-				disqualified_ans.append(sorted_index_value)
-				
-			else:
-				myIndexVal = np.where(arr==np.amax(arr))
-				# print(myIndexVal[0])
-				myIndex.append(myIndexVal[0][0])
-		# print(disqualified_ans, 'incorrect index')
+			myIndexVal = np.where(arr==np.amax(arr))
+			myIndex.append(myIndexVal[0][0])
 
 		incorrect_ans=[]
-		# print(self.questions, len(myIndex))
+
 		for x in range(self.questions-1):
+			# sort for the higher darken choose
+			arr = new_shape2[x]
+			sorted_arr = sorted(arr)
+			# print(x, sorted_arr)
+			
 			if self.answer[x]==myIndex[x]:
 				self.grade.append(1)
+			elif self.answer[x]== -1:
+				self.grade.append(-1)
 			# possible two answers
-			elif myIndex[x] == 9:
+			# arr[3] = because the [3] is the second most colored
+			# possible 2 answer
+			elif sorted_arr[3] > 2000:
 				self.grade.append(2)
+				sorted_index_value = list(np.argsort(arr)[-2:])
+				disqualified_ans.append(sorted_index_value)
+			# elif myIndex[x] == 9:
+			# 	self.grade.append(2)
 			else:
 				self.grade.append(0)
 				incorrect_ans.append(myIndex[x])
@@ -151,22 +161,5 @@ class General:
 		imgResult = self.img.copy()
 		imgResult = utlis.showAnswers_tf(imgResult, myIndex, self.grade, self.answer, self.questions, self.choices)
 		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, no_answer_given
+		
 	
-	
-	def qrcode_reader(self):
-		# decoder = PDF417Decoder(self.img)
-		# print(decoder.decode())
-		# if (decoder.decode() > 0):
-		# 	decoded = decoder.barcode_data_index_to_string(0)
-		# 	print(decoded)
-		# decode(self.img, symbols=[ZBarSymbol.QRCODE])
-		# qcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
-		# for x in qcode:
-		# 	print(x.data.decode('utf-8'))
-		try:
-			qrcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
-			for x in qrcode:
-				myData = x.data.decode('utf-8')
-				return myData
-		except Exception as ed:
-			print('process_answer qr', ed)

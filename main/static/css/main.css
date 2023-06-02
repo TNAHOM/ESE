@@ -21,7 +21,7 @@ body{
   position: relative;
 }
 
-.body .existed table{
+.body .existed table, .new table{
   width: 50%;
   color: white;
 }

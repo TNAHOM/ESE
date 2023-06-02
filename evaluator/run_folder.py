@@ -27,8 +27,12 @@ def gen_folder(answer=None, image=None):
 		result = final_img[0]
 		# print(result, 'gen folder')
 		final_img_buffer = buffer.tobytes()
+		
+		wrong_ans = final_img[6]
+		wrong_que = final_img[5]
 
-		return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), result
+		return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), \
+		       result, wrong_que, wrong_ans
 	except Exception as es:
 		print(es, 'gen exception')
 		return 'ERROR'
@@ -43,8 +47,12 @@ def gen_folder_2(answer=None, image=None):
 		result = final_img[0]
 		# print(result, 'gen folder2')
 		final_img_buffer = buffer.tobytes()
+		
+		wrong_ans = final_img[6]
+		wrong_que = final_img[5]
 	
-		return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), result
+		return (b'--frame\r\n'b'Content-Type: image/jpeg\r\n\r\n' + final_img_buffer + b'\r\n'), \
+		       result, wrong_que, wrong_ans
 	except Exception as es:
 		print(es, 'gen exception')
 		return 'ERROR'
@@ -78,7 +86,7 @@ def connectionToDB(unique_sub):
 		result = cur.fetchall()
 		result_user = cur_user.fetchall()
 		# print(result_user, 'user')
-		insert_data_from = """ INSERT INTO base_score (ID, SCORE, STUDENT_SCORE_ID, SUBJECT_ID, DISPLAY, FINISHED, INCORRECT_ANS) VALUES (%s,%s,%s,%s,%s,%s,%s)"""
+		insert_data_from = """ INSERT INTO base_score (ID, SCORE, STUDENT_SCORE_ID, SUBJECT_ID, DISPLAY, FINISHED, INCORRECT_ANS, INCORRECT_ANS_NUM) VALUES (%s,%s,%s,%s,%s,%s,%s, %s)"""
 		return result, result_user, insert_data_from, cur_exist, cur, conn, cur_exam, exam_id
 	except Exception as er:
 		print(er)
