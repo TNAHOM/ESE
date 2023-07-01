@@ -46,6 +46,7 @@ class TryClass:
     # not_img = cv2.resize(self.img, (self.width, self.height))
     # img = cv2.rotate(not_img, cv2.ROTATE_90_CLOCKWISE)
     img = self.img
+    
     imgBiggestCountour = img.copy()
     imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     imgBlur = cv2.GaussianBlur(imgGray, (5, 5), 1)

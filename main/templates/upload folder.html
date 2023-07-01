@@ -1,59 +1,42 @@
+
 {% extends 'base.html' %}
 
 {% block title %} Home {% endblock %}
 
-
-{% block head %}
-	{{ super() }}
-	<style>
-		.pro-img{
-      position: relative;
-      width: 250px;
-      height: 700px;
-      color: red;
-			background: green;
-		}
-		.info-label{
-			display: grid;
-			grid-template-columns: 70% 30%;
-		}
-		.ingo-right{
-			display grid;
-		}
-
-		.images{
-			display: flex;
-			gap: 1rem;
-		}
-	</style>
-{% endblock %}
-
 {% block body%}
 
-<div class="position-relative overflow-hidden p-3 p-md m-md-3 text-center bg-dark" style="color: white;">
-	<div class="col-md-5 p-lg-5 mx-auto my-5">
-		<h1 class="display-4 font-weight-normal">Upload File/Folder</h1>
-		<p class="lead font-weight-normal">Start evaluating exams by clicking one of two buttons.</p>
+<div class="mini-container">
+	<div class="home">
+		<h1 class="">Upload File/Folder</h1>
 
 		{% if display == False %}
 			<form method="POST" enctype="multipart/form-data">
 				<div class="file">
 					<label for="file">Select folder:</label>
-					<input type="text" id="file" name="file" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan"/>
+					<input type="text" id="file" name="file" class="custom-input" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan"/>
 				</div>
 				<input type="submit" value="Evaluate" class="btn btn-primary" multiple />
 			</form>
-			{% elif display == True %}
-			{% for x in names %}
-				<h3>{{name[x]}} --- {{score[x]}}</h3>
-			{% endfor %}
-			<div class="images">
+		{% elif display == 'back' %}
+			<h2>Score: {{score}}/{{ans|length}}</h2>
+			<div class="display">
+				<img class="" src="data:image/jpeg;base64,{{ img }}" alt="Processed Image">
+				<div>
+					{% for x in range(ans | length) %}
+					<h2>{{ loop.index }}. {{ ans[x] }}</h2>
+					{% endfor %}
+				</div>
 			</div>
-		{% endif %}
+		{% elif display == 'front' %}
+			<h2>Score: {{score}}/{{total_que}}</h2>
+			<div class="display display_f">
+				{% for x in img_list %}
+					<img class="" src="data:image/jpeg;base64,{{ x }}" alt="Processed Image">
+				{% endfor %}
+			</div>
+	{% endif %}
 	</div>
-	<div class="product-devices box-shadow d-none d-md-block"></div>
-	<div class="product-devices product-device-2 box-shadow d-none d-md-block"></div>
+
 </div>
 
 {% endblock %}
-<!--				<img class="pro-img" src="{{ url_for('process.process_img_folder_2') }}">-->

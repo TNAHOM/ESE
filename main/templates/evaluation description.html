@@ -2,41 +2,15 @@
 
 {% block title %} Home {% endblock %}
 
-
-{% block head %}
-	{{ super() }}
-	<style>
-		.pro-img{
-      position: relative;
-      width: 250px;
-      height: 700px;
-      color: red;
-			background: green;
-		}
-		.info-label{
-			display: grid;
-			grid-template-columns: 70% 30%;
-		}
-		.ingo-right{
-			display grid;
-		}
-
-		.images{
-			display: flex;
-			gap: 1rem;
-		}
-	</style>
-{% endblock %}
-
 {% block body%}
-<div class="">
-	<h2>Evaluation description</h2>
-	<div class="body">
-		<div class="new">
+<div class="mini-container">
+	<div class="table">
+		<h2>Evaluation description</h2>
+		<div class="">
 			<h3>New Registerd score</h3>
 			{% if new_result %}
-			<div class="table">
-				<table>
+			<div class="">
+				<table class="custom-table">
 					<tr>
 						<th>Name</th>
 						<th>Score</th>
@@ -55,7 +29,7 @@
 		</div>
 
 		<div class="existed">
-			{% if existed != '' %}
+			{% if existed %}
 			<h3>Already Existed</h3>
 			<div class="table">
 				<table>

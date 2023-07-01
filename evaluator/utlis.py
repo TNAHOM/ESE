@@ -120,7 +120,7 @@ def showAnswers(img, myIndex, grading, answer, questions=None, choices=None):
 	secW = int(img.shape[1] / choices)
 	# print(img.shape[0])
 	secH = int(img.shape[0] / questions)
-	print(grading)
+	# print(grading)
 	for x in range(0, questions-1):
 		# print('questions', questions)
 		myAns = myIndex[x]
@@ -159,30 +159,33 @@ def showAnswers_tf(img, myIndex, grading, answer, questions=None, choices=None):
 	secW = int(img.shape[1] / choices)
 	# print(img.shape[0])
 	secH = int(img.shape[0] / questions)
-	
+
 	for x in range(0, questions-1):
-		# print(x)
+		# print(x+1, grading[x]')
 		myAns = myIndex[x]
 
 		cX = (myAns * secW) + secW // 2  # Find the center value
 		cY = secH + (x * secH) + secH // 2
 		dX = (1 * secW)
-		if grading[x]==1:
-			myColor = (0, 255, 0)
-			cv2.circle(img, (cX, cY), 30, myColor, cv2.FILLED)
-		elif grading[x]==2:
-			myColor = (255, 255, 255)
-			cv2.circle(img, (dX, cY), 35, myColor, cv2.FILLED)
-		elif grading[x]==3:
-			myColor = (255, 255, 255)
-			cv2.circle(img, (dX, cY), 18, myColor, cv2.FILLED)
-		else:
-			myColor = (0, 255, 0)
-			correctAns = answer[x]
+		if grading[x]!=-1:
+			
+			if grading[x]==1:
+				myColor = (0, 255, 0)
+				cv2.circle(img, (cX, cY), 30, myColor, cv2.FILLED)
+			elif grading[x]==2:
+				myColor = (255, 255, 255)
+				cv2.circle(img, (dX, cY), 35, myColor, cv2.FILLED)
+			elif grading[x]==3:
+				myColor = (255, 255, 0)
+				cv2.circle(img, (dX, cY), 18, myColor, cv2.FILLED)
+			elif grading[x]==0:
+				myColor = (0, 255, 0)
+				correctAns = answer[x]
 
-			# cv2.rectangle(img, (myAns * (secW), x * secH), ((myAns * (secW)) + (secW), (x * secH) + secH), myColor, cv2.FILLED)
-			cv2.circle(img, ((correctAns * secW) + secW // 2, ((x+1) * secH) + secH // 2), 30, (0, 255, 0), cv2.FILLED)
-		cv2.circle(img, (cX, cY), 30, myColor, cv2.FILLED)
+				# cv2.rectangle(img, (myAns * (secW), x * secH), ((myAns * (secW)) + (secW), (x * secH) + secH), myColor, cv2.FILLED)
+				cv2.circle(img, (secW + (correctAns * secW) + secW // 2, secH + (x * secH) + secH // 2), 10, (255, 0, 0),
+					cv2.FILLED)
+			cv2.circle(img, (cX, cY), 20, myColor, cv2.FILLED)
 	return img
 
 def img_warp(img_box, img, widthImg, heightImg):

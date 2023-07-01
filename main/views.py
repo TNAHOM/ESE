@@ -21,7 +21,7 @@ def admin():
 def disabled():
 	# LIVE url -> process_live.check_shape
 	flash('This option is temporarily disabled', category='info')
-	return render_template('home.html')
+	return redirect(url_for('views.school'))
 
 
 @views.route('/register', methods=['GET', 'POST'])

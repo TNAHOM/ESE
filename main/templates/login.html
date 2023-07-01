@@ -3,20 +3,21 @@
 {% block title %} Login Page {% endblock %}
 
 {% block body%}
-<form method="POST" class="form-register" style="color:white">
-	{{ form.hidden_tag() }}
-	<h1 class="h3 mb-3 font-weight-normal">Login</h1>
-	<br>
-	{{ form.email.label() }}
-	{{ form.email(class='form-control', placeholder='Enter Email') }}
+<div class="mini-container">
+	<form method="POST" class="form-register">
+		{{ form.hidden_tag() }}
+		<h1 class="h3 mb-3 font-weight-normal">Login</h1>
+		<br>
+		{{ form.email.label() }}
+		{{ form.email(class='form-control', placeholder='Enter Email') }}
 
-	{{ form.password.label() }}
-	{{ form.password(class='form-control', placeholder='Enter Password') }}
+		{{ form.password.label() }}
+		{{ form.password(class='form-control', placeholder='Enter Password') }}
 
-	<br>
+		<br>
 
-	{{ form.submit(class='btn btn-lg btn-block btn-primary') }}
-</form>
-
+		{{ form.submit(class='btn btn-lg btn-block btn-primary') }}
+	</form>
+</div>
 
 {% endblock %}
