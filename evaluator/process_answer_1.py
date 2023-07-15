@@ -13,17 +13,6 @@ class General:
 		self.questions = questions
 		self.choices = choices
 	
-	def qrcode_reader(self):
-		try:
-			qrcode = decode(self.img, symbols=[ZBarSymbol.QRCODE])
-			# print(qrcode, 'qrcode')
-			for x in qrcode:
-				myData = x.data.decode('utf-8')
-				# print(myData, '====')
-				return myData
-		except Exception as ed:
-			print('process_answer qr', ed)
-	
 	def func_choose(self):
 		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
 		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
@@ -52,7 +41,9 @@ class General:
 		new_list = np.delete(new_shape, 0, 0)
 		new_shape2 = np.reshape(new_list, (self.questions-1, self.choices-1))
 		# print(new_shape2)
-		
+		# for x in new_shape2:
+		# 	print(x,'choose')
+
 		# FINDING INDEX VALUES OF MARKING
 		myIndex = []
 		# print(len(new_shape2))
@@ -79,7 +70,7 @@ class General:
 			# possible two answers
 			# arr[3] = because the [3] is the second most colored
 			# possible 2 answer
-			elif sorted_arr[3] > 2000:
+			elif sorted_arr[3] > 1200:
 				self.grade.append(2)
 				# helps to know the index of the sorted value
 				sorted_index_value = list(np.argsort(arr)[-2:])
@@ -123,7 +114,7 @@ class General:
 			if countC==self.choices: countR += 1;countC = 0
 		new_list = np.delete(myPixelVal, 0, 0)
 		# for x in new_list:
-		# 	print(x, 'pixel')
+		# 	print(x, 'tf')
 		
 		# FINDING INDEX VALUES OF MARKING
 		myIndex = []
@@ -174,6 +165,32 @@ class General:
 
 		imgResult = self.img.copy()
 		imgResult = utlis.showAnswers_tf(imgResult, myIndex, self.grade, self.answer, self.questions, self.choices)
-		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, no_answer_given
-		
+		return sum(total_sum), self.questions, imgResult, imgThresh, disqualified_que, no_answer_given, myIndex
 	
+	def func_code(self):
+		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
+		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
+		boxes = utlis.splitBoxes(imgThresh, self.questions, self.choices)
+		# GETTING NO ZERO PIXEL VALUES OF EACH BOX
+		myPixelVal = np.zeros((self.questions, self.choices))
+		countC = 0
+		countR = 0
+		
+		for image in boxes:
+			totalPixels = cv2.countNonZero(image)
+			myPixelVal[countR][countC] = totalPixels
+			countC += 1
+			if countC==self.choices: countR += 1;countC = 0
+		new_list = np.delete(myPixelVal, 0, 0)
+		# for x in new_list:
+		# 	print(x, 'exam_code')
+		
+		# FINDING INDEX VALUES OF MARKING
+		myIndex = []
+		for x in range(0, self.questions - 1):
+			arr = new_list[x]
+			
+			myIndexVal = np.where(arr==np.amax(arr))
+			myIndex.append(myIndexVal[0][0])
+		# print(myIndex, 'myIndex')
+		return myIndex

@@ -30,7 +30,7 @@ class TryClass:
       # cv2.drawContours(imgBiggestCountour, x, -1, (0, 255, 0), 15)
       # cv2.imshow('we', imgBiggestCountour)
       # cv2.waitKey(0)
-      # cv2.destroyAllWindows()
+      cv2.destroyAllWindows()
       img_warped = utlis.reorder(x)
       pt1 = np.float32(img_warped)
 
@@ -39,7 +39,7 @@ class TryClass:
       
       imgWarpColored = cv2.warpPerspective(img, matrix, (self.width, self.height))
       # cv2.imshow('mk', imgWarpColored)
-      
+      # cv2.waitKey(0)
       return imgWarpColored, imgBiggestCountour
 
   def process_img_folder(self):

@@ -11,13 +11,16 @@
 
 		{% if display == False %}
 			<form method="POST" enctype="multipart/form-data">
+				<h4>Enter the file path on the below input field</h4>
+
 				<div class="file">
-					<label for="file">Select folder:</label>
-					<input type="text" id="file" name="file" class="custom-input" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan3"/>
+					<label for="file">Select file:</label>
+					<input type="text" id="file" class="custom-input" name="file" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan2\exam v7 2.jpeg"/>
 				</div>
 				<input type="submit" value="Evaluate" class="btn btn-primary" multiple />
 			</form>
 		{% elif display == 'back' %}
+			<h2>Name: {{name}}</h2>
 			<h2>Score: {{score}}/{{ans|length}}</h2>
 			<div class="display">
 				<img class="" src="data:image/jpeg;base64,{{ img }}" alt="Processed Image">
@@ -28,6 +31,7 @@
 				</div>
 			</div>
 		{% elif display == 'front' %}
+			<h2>Name: {{name}}</h2>
 			<h2>Score: {{score}}/{{total_que}}</h2>
 			<div class="display display_f">
 				{% for x in img_list %}

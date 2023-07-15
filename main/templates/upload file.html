@@ -8,36 +8,19 @@
 <div class="mini-container">
 	<div class="home">
 		<h1 class="">Upload File/Folder</h1>
+		<form method="POST" enctype="multipart/form-data">
+			<h4>Enter the file path on the below input field</h4>
 
-		{% if display == False %}
-			<form method="POST" enctype="multipart/form-data">
-				<div class="file">
-					<label for="file">Select file:</label>
-					<input type="text" id="file" class="custom-input" name="file" value="C:\Users\Nahom tamirat.DESKTOP-O0JRFDT\Desktop\scan2\exam (2).jpg"/>
-				</div>
-					<p>Dagim Bedlu Mamo , Helina Dawit Wondimu, Kalab Tamirat Kebede , IMG_20230602_125039, natnl yadete imam</p>
-				<input type="submit" value="Evaluate" class="btn btn-primary" multiple />
-			</form>
-		{% elif display == 'back' %}
-			<h2>Name: {{name}}</h2>
-			<h2>Score: {{score}}/{{ans|length}}</h2>
-			<div class="display">
-				<img class="" src="data:image/jpeg;base64,{{ img }}" alt="Processed Image">
-				<div>
-					{% for x in range(ans | length) %}
-					<h2>{{ loop.index }}. {{ ans[x] }}</h2>
-					{% endfor %}
-				</div>
+			<div class="file">
+				<label for="file">Folder path:</label>
+				<input type="text" id="file" class="custom-input" name="file"/>
+
+				<label for="folder_file">Choose file:</label>
+				<input type="file" name="file" id="folder_file">
 			</div>
-		{% elif display == 'front' %}
-			<h2>Name: {{name}}</h2>
-			<h2>Score: {{score}}/{{total_que}}</h2>
-			<div class="display display_f">
-				{% for x in img_list %}
-					<img class="" src="data:image/jpeg;base64,{{ x }}" alt="Processed Image">
-				{% endfor %}
-			</div>
-	{% endif %}
+
+			<input type="submit" value="Evaluate" class="btn btn-primary" multiple />
+		</form>
 	</div>
 
 </div>

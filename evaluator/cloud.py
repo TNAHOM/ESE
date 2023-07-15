@@ -20,13 +20,13 @@ def text_detection(image_path):
 	
 	operation_location = response.headers['Operation-Location']
 	operation_id = operation_location.split('/')[-1]
-	
+	# print(OperationStatusCodes, 'status')
 	status = OperationStatusCodes.running
 	
 	while status==OperationStatusCodes.running:
 		result = cv_client.get_read_result(operation_id)
 		status = result.status
-		
+
 		# Check if the operation succeeded
 		if status==OperationStatusCodes.succeeded:
 			if result.analyze_result is not None:
