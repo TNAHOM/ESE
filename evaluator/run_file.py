@@ -36,15 +36,15 @@ def gen_name(image, size):
 		image_rot = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
 		sliced_img = top.TryClass(image_rot, size,  1150, 800).process_img()[0]
 		resliced_img = cv2.resize(sliced_img, (1150, 200))
-		# cv2.imshow(f'{size}', resliced_img)
-		# cv2.waitKey(0)
+		cv2.imshow(f'{size} name', resliced_img)
+		cv2.waitKey(0)
 		
 		ret, buffer = cv2.imencode('.jpg', resliced_img)
 		result = buffer.tobytes()
 		
 		analyzed_text =cloud.text_detection(buffer)
 		processed_image_str = base64.b64encode(buffer).decode('utf-8')
-		# print(analyzed_text, 'analyzed_text')
+		print(analyzed_text, 'analyzed_text')
 		return sliced_img, result, processed_image_str, buffer, analyzed_text
 
 	# make an error handling for connectivity issue
@@ -54,6 +54,8 @@ def gen_name(image, size):
 def gen_file_choose(answer=None, image=None, size=None):
 	try:
 		sliced_img = top.TryClass(image, size, 918, 1224).process_img()[0]
+		cv2.imshow(f'{size} choose', sliced_img)
+		cv2.waitKey(0)
 		final_img = process_answer_1.General(sliced_img, answer, questions, choices).func_choose()
 		
 		ret, buffer = cv2.imencode('.jpg', final_img[2])
@@ -71,6 +73,8 @@ def gen_file_choose(answer=None, image=None, size=None):
 def gen_file_m(answer=None, image=None, size=None):
 	try:
 		sliced_img = top.TryClass(image, size, 660, 660).process_img()[0]
+		cv2.imshow(f'{size} matching', sliced_img)
+		cv2.waitKey(0)
 		final_img = process_answer_1.General(sliced_img, answer, question_m, choices_m).func_choose()
 		score = final_img[0]
 
@@ -85,6 +89,8 @@ def gen_file_m(answer=None, image=None, size=None):
 def gen_file_tf(answer=None, image=None, size=None):
 	try:
 		sliced_img = top.TryClass(image, size, width_tf, height_tf).process_img()[0]
+		cv2.imshow(f'{size} TF', sliced_img)
+		cv2.waitKey(0)
 		final_img = process_answer_1.General(sliced_img, answer, 11, 2).func_tf()
 		score = final_img[0]
 		
@@ -115,6 +121,8 @@ def gen_write(image=None, size=None):
 def gen_code(image=None, size=None):
 	try:
 		sliced_img = top.TryClass(image, size, 600, 700).process_img()[0]
+		cv2.imshow(f'{size} code', sliced_img)
+		cv2.waitKey(0)
 		answer = [0, 0, 0, 0, 0, 0, 0]
 		final_img = process_answer_1.General(sliced_img, answer, question_c, choice_c).func_code()
 		# cv2.imshow('ss', sliced_img)

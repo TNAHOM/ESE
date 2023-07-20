@@ -1,5 +1,5 @@
 from flask import render_template, redirect, url_for, flash, request, Blueprint
-from evaluator import run_folder, run_file, cloud
+from evaluator import run_folder, run_file, cloud, connection
 from flask_login import login_required, current_user
 import os, cv2
 import datetime
@@ -7,19 +7,7 @@ import datetime
 
 process_file = Blueprint('process_file', __name__)
 
-class AllInOneFolder:
-  def __init__(self, image=None, qrcode=None):
-    self.qrcode = qrcode
-    self.answer_folder = run_folder.final_ans(self.qrcode)
-    self.image = image
-  
-  def folder(self):
-    gen = run_folder.gen_folder(self.answer_folder[0], self.image)
-    return gen, self.answer_folder[0]
-  
-  def folder_2(self):
-    gen = run_folder.gen_folder_2(self.answer_folder[0], self.image)
-    return gen, self.answer_folder[0]
+############  USE FILE ############
 
 @process_file.route('/evaluate-exam', methods=['GET', 'POST'])
 @login_required
@@ -30,26 +18,27 @@ def upload_file():
       file_name = request.files['file'].filename
       
       full_path = directory+'\\'+file_name
-      if file_name[-4:] == 'jpeg':
+      if file_name[-4:] == 'jpeg' or '.jpg' or '.png':
         img = cv2.imread(full_path)
         exam_code = run_file.gen_code(img, 4)
+        print(exam_code)
 
         # 2 == BACK
         if type(exam_code) == IndexError:
           exam_code = run_file.gen_code(img, 2)
-          if int(str(exam_code)[-1])==2:
-            to_db = run_file.connectionToDB(exam_code_b=exam_code)
-            if to_db[7] is not None:
-              # print(to_db[7])
-              student_name = run_file.gen_name(img, 1)
 
+          if int(str(exam_code)[-1])==2:
+            exam_b = connection.ConnectionToDB(exam_code_b=exam_code)
+            check_exam_b = exam_b.check_exam_b()
+            if check_exam_b is not None:
+              student_name = run_file.gen_name(img, 1)
+              
               # student_name[4] == converts img to text
-              get_name = run_file.get_name(student_name[4], to_db[1])
-              print(get_name, 'get_name')
-              to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-                (to_db[7][0], get_name[1]))
-              does_exist = to_db[3].fetchone()
-  
+              get_name = run_file.get_name(student_name[4], exam_b.get_student())
+              # get_name = ('Saron Tamirat Kebede', 'b5bec8a2-9674-47ac-9f65-ebc41395daea')
+              
+              exam_exist = connection.ConnectionToDB(name_id=get_name[1]).exam_exist(check_exam_b[0])
+
               # use answer_list instead of final_answer b/c there is no preprocessing that will happen unlike t/f and choose
               final_answer = run_file.answer_lists(exam_code_b=exam_code)
               response = run_file.gen_write(img, 0)
@@ -63,40 +52,34 @@ def upload_file():
                   score += 1
               display = 'back'
 
-              if does_exist is None:
-                run_file.upload_result(score, get_name[1], to_db[7][0], 'true', datetime.date.today(), exam_code_b=exam_code)
+              if exam_exist is None:
+                connection.ConnectionToDB(exam_code_b=exam_code).upload_result(score, get_name[1], check_exam_b[0])
                 flash(f'{get_name[0]} exam has been registered successfully', category='success')
               else:
-                to_db[3].execute(
-                  "SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s AND SCORE_EXAM_CODE_B=%s",
-                  (to_db[7][0], get_name[1], exam_code,))
-                does_exist_f = to_db[3].fetchone()
-  
-                if does_exist_f is None:
-                  to_db[3].execute(
-                    "UPDATE base_score SET SCORE_EXAM_CODE_B=%s, SCORE=SCORE + %s WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-                    (exam_code, score, to_db[7][0], get_name[1],))
-                  to_db[5].commit()
-    
-                  flash(f'{get_name[0]} exam has been updated', category='danger')
-                else:
-                  flash(f'{get_name[0]} exam has already been saved', category='danger')
+                get_exam_b = connection.ConnectionToDB(name_id=get_name[1], exam_code_b=exam_code, name=get_name[0])
+                run = get_exam_b.get_exam_b(score, check_exam_b)
 
-            return render_template('show result.html', name=get_name[0] ,display=display, img=response[2], ans=final_answer, score=score,)
-  
+                flash(run, category='danger')
+              return render_template('show result.html', name=get_name[0], display=display, img=response[2],
+                ans=final_answer, score=score, )
+
+            elif check_exam_b is None:
+              flash('Exam id doesnt exist', category='danger')
+              return redirect(url_for('process_file.upload_file'))
+
         # 1 == FRONT
         elif int(str(exam_code)[-1]) == 1:
           to_db = run_file.connectionToDB(exam_code_f=exam_code)
-          if to_db[7] is not None:
+          check_exam_f = connection.ConnectionToDB(exam_code_f=exam_code).check_exam_f()
+
+          if check_exam_f is not None:
             # print(to_db[7])
             student_name = run_file.gen_name(img, 2)
 
             # student_name[4] == converts img to text
             get_name = run_file.get_name(student_name[4], to_db[1])
-            print(get_name, 'get_name')
-            to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-              (to_db[7][0], get_name[1]))
-            does_exist = to_db[3].fetchone()
+
+            exam_exist = connection.ConnectionToDB(name_id=get_name[1]).exam_exist(check_exam_f[0])
 
             final_answer = run_file.final_ans(exam_code)
     
@@ -146,28 +129,29 @@ def upload_file():
               display_img.append(all_together_m[2])
               score += all_together_m[1]
       
-            if does_exist is None:
-              run_file.upload_result(score, get_name[1], to_db[7][0], 'true', datetime.date.today(),
-                str(incorrect_ans), str(incorrect_que), str(disqualified_que), exam_code_f=exam_code)
+            if exam_exist is None:
+              print(score, get_name[1], check_exam_f[0],
+              incorrect_ans, incorrect_que, disqualified_ans, disqualified_que, '....')
+              connection.ConnectionToDB(exam_code_f=exam_code).upload_result(int(score), get_name[1], check_exam_f[0],
+              str(incorrect_ans), str(incorrect_que), str(disqualified_ans[0]), str(disqualified_que))
+
+              # run_file.upload_result(score, get_name[1], to_db[7][0], 'true', datetime.date.today(),
+              #   str(incorrect_ans), str(incorrect_que), str(disqualified_que), exam_code_f=exam_code)
               flash(f'{get_name[0]} exam has been registered successfully', category='success')
             
             else:
-              to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s AND SCORE_EXAM_CODE_F=%s",
-                (to_db[7][0], get_name[1], exam_code,))
-              does_exist_f = to_db[3].fetchone()
               
-              if does_exist_f is None:
-                to_db[3].execute("UPDATE base_score SET SCORE_EXAM_CODE_F=%s, SCORE=SCORE + %s WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-                  (exam_code, score,to_db[7][0], get_name[1],))
-                to_db[5].commit()
-               
-                flash(f'{get_name[0]} exam has been updated', category='danger')
-              else:
-                flash(f'{get_name[0]} exam has already been saved', category='danger')
+              get_exam_f = connection.ConnectionToDB(name_id=get_name[1], exam_code_f=exam_code, name=get_name[0])
+              run = get_exam_f.get_exam_f(score, check_exam_f)
+  
+              flash(run, category='danger')
     
             return render_template('show result.html', name=get_name[0], display='front', img_list=display_img,
               score=score, total_que=total_que)
       
+          elif check_exam_f is None:
+            flash('Exam id doesnt exist', category='danger')
+            return redirect(url_for('process_file.upload_file'))
       else:
         flash('Their is no image detected with the extension *.jpg, *.png, *.jpeg', category='danger')
         return redirect(url_for('process_file.upload_file'))
@@ -175,7 +159,7 @@ def upload_file():
       
       return render_template('upload file.html')
   except Exception as ec:
-    print(ec, 'ec')
+    print(ec, 'upload file')
     flash(f'Error: {ec}', category='danger')
     return redirect(url_for('process_file.upload_file'))
 
@@ -368,3 +352,5 @@ def upload_folder():
   elif request.method == 'GET':
     display = False
     return render_template('upload folder.html', display=display, score='score', name='stu', names='(len(11))')
+
+############  USE LIVE ############
