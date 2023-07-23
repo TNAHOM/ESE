@@ -96,6 +96,7 @@ a{
   padding-top: 2rem;
   padding: 1rem;
   display: flex;
+  gap: 1rem;
   justify-content: center;
 }
 
@@ -262,3 +263,4 @@ a{
   opacity: 1;
 }
 
+/* CHECK SHAPE */

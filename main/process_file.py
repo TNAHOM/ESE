@@ -21,6 +21,7 @@ def upload_file():
       if file_name[-4:] == 'jpeg' or '.jpg' or '.png':
         img = cv2.imread(full_path)
         exam_code = run_file.gen_code(img, 4)
+        # exam_code = 133441
         print(exam_code)
 
         # 2 == BACK
@@ -156,7 +157,7 @@ def upload_file():
         flash('Their is no image detected with the extension *.jpg, *.png, *.jpeg', category='danger')
         return redirect(url_for('process_file.upload_file'))
     elif request.method == 'GET':
-      
+	    
       return render_template('upload file.html')
   except Exception as ec:
     print(ec, 'upload file')

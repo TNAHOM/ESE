@@ -6,7 +6,7 @@
 	<style>
 		.pro-img{
       position: relative;
-      width: 250px;
+      width: 25%;
       color: red;
 			background: green;
 		}
@@ -27,9 +27,8 @@
 	<hr>
 
 	<div class="col-9">
-		<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
-		<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
-		<img class="pro-img" src="{{ url_for('process.process_img_tf') }}" alt="{{ error }}">
+		<img class="pro-img" src="data:image/jpeg;base64,{{ img }}" alt="Processed Image">
+		<img class="pro-img" src="data:image/jpeg;base64,{{ img2 }}" alt="Processed Image">
 	</div>
 	<div class="col-3">
 		<form method="POST" class="form-register">

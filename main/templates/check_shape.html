@@ -1,37 +1,34 @@
 {% extends 'base.html' %}
 
-{% block title %} HOME {% endblock %}
-{% block head %}
-	{{ super() }}
-	<style>
-		.pro-img{
-      position: relative;
-      width: 40%;
-      color: red;
-			background: green;
-		}
-		.info-label{
-			display: grid;
-			grid-template-columns: 60% 40%;
-		}
-		.ingo-right{
-			display grid;
-		}
-	</style>
-{% endblock %}
+{% block title %} Check Evaluation {% endblock %}
 {% block body %}
 
-<div class="row">
-	<h3>Answer sheet</h3>
-	<br>
-	<hr>
+<div class="mini-container">
 
-	<div class="col-9">
-		<img class="pro-img" src="{{ url_for('process_live.shape') }}" alt="{{ error }}">
+	{% if display == 'true' %}
+	<div class="">
+		<h3>Answer sheet</h3>
+		<img class="pro-img" src="{{ url_for('process_live.shape', number=selected_number) }}" alt="{{ error }}">
 	</div>
-	<div class="col-3">
+	<div class="">
+		<h4>Proceed to Evaluation</h4>
+		<a href="{{ url_for('process_live.evaluate', number=selected_number) }}"><input type="submit" value="Proceed" class="btn btn-primary"></a>
+	</div>
 
+	{% elif display == 'false' %}
+	<div class="">
+		<h3>Select camera Id:</h3>
+		<form action="{{ url_for('process_live.check_shape') }}" method="POST">
+	    <label for="number">Select a number from 1 to 10:</label>
+		  <select name="number" id="number">
+	      {% for n in range(0, 15) %}
+	        <option value="{{ n }}">{{ n }}</option>
+	      {% endfor %}
+	    </select>
+	    <input type="submit" value="Submit" class="btn btn-primary">
+		</form>
 	</div>
+	{% endif %}
 
 </div>
 

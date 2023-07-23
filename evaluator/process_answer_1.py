@@ -22,7 +22,7 @@ class General:
 		myPixelVal = np.zeros((self.questions, self.choices))
 		countC = 0
 		countR = 0
-		
+
 		for image in boxes:
 			totalPixels = cv2.countNonZero(image)
 			myPixelVal[countR][countC] = totalPixels
