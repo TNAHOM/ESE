@@ -261,4 +261,43 @@ a{
   background-color: #e9ecef;
   opacity: 1;
 }
+/* --- CHECK SHAPE --- */
+.mini-container .img_display{
+  display: grid;
+  grid-template-columns: 60% 25%;
+  gap: 2rem;
+  justify-content: center;
+}
 
+.mini-container .img_display .pro-img{
+  width: 75%;
+}
+
+/* --- LIVE EVALUATION --- */
+.mini-container .live{
+  display: grid;
+  grid-template-columns: 70% 30%;
+  gap: 1rem;
+}
+
+.live .live_img img{
+  width: 35%;
+  aspect-ratio: 3/2;
+  object-fit: contain;
+  margin-left: ;
+}
+
+.live .info{
+  width: 80%;
+  background: #2c3237;
+  padding: 0 0.5rem 0 2rem;
+  height: 250px;
+}
+
+.live .info h3{
+  text-align: center;
+}
+
+.mini-container .answer h3{
+  text-align: center;
+}

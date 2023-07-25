@@ -125,7 +125,7 @@ class General:
 			
 			myIndexVal = np.where(arr==np.amax(arr))
 			myIndex.append(myIndexVal[0][0])
-
+		print()
 		for x in range(0, self.questions - 1):
 			arr = new_list[x]
 			sorted_arr = sorted(arr)

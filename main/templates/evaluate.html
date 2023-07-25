@@ -1,46 +1,27 @@
 {% extends 'base.html' %}
 
-{% block title %} HOME {% endblock %}
-{% block head %}
-	{{ super() }}
-	<style>
-		.pro-img{
-      position: relative;
-      width: 250px;
-      color: red;
-			background: green;
-		}
-		.info-label{
-			display: grid;
-			grid-template-columns: 70% 30%;
-		}
-		.ingo-right{
-			display grid;
-		}
-	</style>
-{% endblock %}
+{% block title %} Evaluate {% endblock %}
+
 {% block body %}
 
-<div class="row">
-	<h3>Answer sheet{{display}}</h3>
-	<br>
-	<hr>
-
-	<div class="col-9">
-		<img class="pro-img" src="{{ url_for('process.process_img_1') }}" alt="{{ error }}">
-		<img class="pro-img" src="{{ url_for('process.process_img_2') }}" alt="{{ error }}">
-		<img class="pro-img" src="{{ url_for('process.process_img_tf') }}" alt="{{ error }}">
-	</div>
-	<div class="col-3">
-		<form method="POST" class="form-register">
-			<label>Student Name:</label>
-			<input type="text" name="name" class="form-control" value="{{ request.form['name'] }}">
-
-			<input type="submit" value="submit">
-
-		</form>
-
-		{{ score }}
+<div class="mini-container">
+	<div class="answer">
+		<h3>Answer sheet</h3>
+		<div class="live">
+			<div class="live_img">
+				<img class="pro-img" src="data:image/jpeg;base64,{{ img }}" alt="Processed Image">
+				<img class="pro-img" src="data:image/jpeg;base64,{{ img2 }}" alt="Processed Image">
+				<img class="pro-img" src="data:image/jpeg;base64,{{ img_tf }}" alt="Processed Image">
+				<img class="pro-img" src="data:image/jpeg;base64,{{ img_match }}" alt="Processed Image">
+			</div>
+			<div class="info">
+				<h3><u>Exam Info:</u></h3>
+				<h4>Student Name: Saron Tamirat Kebede</h4>
+				<h4>Score: 23</h4>
+				<h4>Subject: Biology</h4>
+				<input type="button" class="btn btn-primary" value="Submit">
+			</div>
+		</div>
 	</div>
 
 </div>
