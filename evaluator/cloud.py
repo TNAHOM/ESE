@@ -1,51 +1,26 @@
-import io
 import json
-from msrest.authentication import CognitiveServicesCredentials
-from azure.cognitiveservices.vision.computervision import ComputerVisionClient
-from azure.cognitiveservices.vision.computervision.models import OperationStatusCodes
-from thefuzz import process
 
-credential_file = 'evaluator/credential.json'
+import requests
+from thefuzz import process, fuzz
 
-credential = json.load(open(credential_file))
-API_KEY, ENDPOINT = credential['API_KEY'], credential['ENDPOINT']
+def similarity_test(ans_list, ans_given):
+  result = {}
+  score = 0
+  for x in range(len(ans_list)):
+    similarity = fuzz.ratio(ans_list[x], ans_given[x])
+    result.update({ans_list[x]: similarity})
+    if similarity >= 75:
+      score += 1
+  
+  return result, score
 
-# Create a Computer Vision client
-cv_client = ComputerVisionClient(ENDPOINT, CognitiveServicesCredentials(API_KEY))
-
-
-def text_detection(image_path):
-	answer = []
-	response = cv_client.read_in_stream(io.BytesIO(image_path), raw=True)
-	
-	operation_location = response.headers['Operation-Location']
-	operation_id = operation_location.split('/')[-1]
-	# print(OperationStatusCodes, 'status')
-	status = OperationStatusCodes.running
-	
-	while status==OperationStatusCodes.running:
-		result = cv_client.get_read_result(operation_id)
-		status = result.status
-
-		# Check if the operation succeeded
-		if status==OperationStatusCodes.succeeded:
-			if result.analyze_result is not None:
-				read_result = result.analyze_result.read_results
-				for analyze_result in read_result:
-					# print(analyze_result, 'ana')
-					for line in analyze_result.lines:
-						answer.append(line.text)
-			else:
-				print('Analyze result is None.')
-		
-		elif status==OperationStatusCodes.failed:
-			print('Error incounterd, it could be connectivity or timeout.')
-			return 'Failed'
-		
-	answer = [item.replace('-', '') for item in answer if item.replace('-', '')!='']
-	return answer
-
-
-def similarity_test(answer, correct_list):
-	result = process.extractOne(answer, correct_list)
-	return result
+def text_detection4(img_data_bytes):
+    headers = {"Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDg1NzMwODUtZDA2Yi00ZTg1LWIyZWYtOTQ0Njk2ODRiYzlkIiwidHlwZSI6ImFwaV90b2tlbiJ9.ShuKVYOyi53B3CYhhWJLzqlAJ7YRayjGalUaGLq9if8"}
+    url = "https://api.edenai.run/v2/ocr/ocr"
+    data = {"providers": "google", "language": "en"}
+    files = {"file": ('image.jpg', img_data_bytes)}  # Using a tuple to provide filename and bytes data
+    response = requests.post(url, data=data, files=files, headers=headers)
+    print(response, data)
+    result = json.loads(response.text)
+    print(result["google"]["text"], type(result["google"]["text"]))
+    return result["google"]["text"]

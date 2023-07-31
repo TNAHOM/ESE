@@ -143,4 +143,26 @@ class TryClass:
       imgWarpColored = cv2.warpPerspective(img, matrix, (self.width, self.height))
       
       return imgWarpColored, imgBiggestCountour
+
+  def process_particular_img(self):
+    img = cv2.resize(self.img, (self.width, self.height))
+    # img = cv2.rotate(not_img, cv2.ROTATE_90_CLOCKWISE)
+    imgBiggestCountour = img.copy()
+    imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    imgBlur = cv2.GaussianBlur(imgGray, (5, 5), 1)
+    imgCanny = cv2.Canny(imgBlur, 10, 50)
+    countours, hierarchy = cv2.findContours(imgCanny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+    rectCon = utlis.rectContour(countours)
+    # print('kl', len(rectCon))
+    x = utlis.getCornerPoints(rectCon[self.sz_num])
   
+    if x.size!=0:
+      img_warped = utlis.reorder(x)
+      pt1 = np.float32(img_warped)
+    
+      pt2 = np.float32([[0, 0], [self.width, 0], [0, self.height], [self.width, self.height]])
+      matrix = cv2.getPerspectiveTransform(pt1, pt2)
+    
+      imgWarpColored = cv2.warpPerspective(img, matrix, (self.width, self.height))
+
+      return imgWarpColored, imgBiggestCountour

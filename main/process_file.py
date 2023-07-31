@@ -33,10 +33,12 @@ def upload_file():
       if file_name[-4:] == 'jpeg':
         img = cv2.imread(full_path)
         exam_code = run_file.gen_code(img, 4)
+        print(type(exam_code), '--')
 
         # 2 == BACK
         if type(exam_code) == IndexError:
           exam_code = run_file.gen_code(img, 2)
+          print(exam_code, 'back')
           if int(str(exam_code)[-1])==2:
             to_db = run_file.connectionToDB(exam_code_b=exam_code)
             if to_db[7] is not None:
@@ -44,7 +46,8 @@ def upload_file():
               student_name = run_file.gen_name(img, 1)
 
               # student_name[4] == converts img to text
-              get_name = run_file.get_name(student_name[4], to_db[1])
+              # get_name = run_file.get_name(student_name[4], to_db[1])
+              get_name = ('Saron Tamirat Kebede', 'b5bec8a2-9674-47ac-9f65-ebc41395daea')
               print(get_name, 'get_name')
               to_db[3].execute("SELECT * FROM base_score WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
                 (to_db[7][0], get_name[1]))
@@ -54,17 +57,12 @@ def upload_file():
               final_answer = run_file.answer_lists(exam_code_b=exam_code)
               response = run_file.gen_write(img, 0)
               analyzed_text = response[4]
-              
-              score = 0
-              for x in analyzed_text:
-                result = cloud.similarity_test(x, final_answer)
-                # print(result[1])
-                if result[1] >= 70:
-                  score += 1
+
+              result = cloud.similarity_test(analyzed_text, final_answer)
               display = 'back'
 
               if does_exist is None:
-                run_file.upload_result(score, get_name[1], to_db[7][0], 'true', datetime.date.today(), exam_code_b=exam_code)
+                run_file.upload_result(result[1], get_name[1], to_db[7][0], 'true', datetime.date.today(), exam_code_b=exam_code)
                 flash(f'{get_name[0]} exam has been registered successfully', category='success')
               else:
                 to_db[3].execute(
@@ -75,14 +73,14 @@ def upload_file():
                 if does_exist_f is None:
                   to_db[3].execute(
                     "UPDATE base_score SET SCORE_EXAM_CODE_B=%s, SCORE=SCORE + %s WHERE SUBJECT_ID=%s AND STUDENT_SCORE_ID=%s",
-                    (exam_code, score, to_db[7][0], get_name[1],))
+                    (exam_code, result[1], to_db[7][0], get_name[1],))
                   to_db[5].commit()
     
                   flash(f'{get_name[0]} exam has been updated', category='danger')
                 else:
                   flash(f'{get_name[0]} exam has already been saved', category='danger')
 
-            return render_template('show result.html', name=get_name[0] ,display=display, img=response[2], ans=final_answer, score=score,)
+            return render_template('show result.html', name=get_name[0] ,display=display, img=response[2], ans=final_answer, score=result[1],)
   
         # 1 == FRONT
         elif int(str(exam_code)[-1]) == 1:
@@ -224,20 +222,15 @@ def upload_folder():
             response = run_file.gen_write(img, 0)
             analyzed_text = response[4]
   
-            score = 0
-            for x in analyzed_text:
-              result = cloud.similarity_test(x, final_answer)
-              # print(result[1])
-              if result[1] >= 70:
-                score += 1
+            result = cloud.similarity_test(analyzed_text, final_answer)
             display = 'back'
             
             # If it doesn't exist with student name and subject id
             if does_exist is None:
-              run_file.upload_result(score, get_name[1], to_db[7][0], 'true', datetime.date.today(),
+              run_file.upload_result(result[1], get_name[1], to_db[7][0], 'true', datetime.date.today(),
                 exam_code_b=exam_code)
               flash(f'{get_name[0]} exam has been registered successfully', category='success')
-              new_result.update({get_name[0]:score})
+              new_result.update({get_name[0]:result[1]})
               num_saved+=1
 
             # If it exists with student name and subject id then

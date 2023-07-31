@@ -34,17 +34,15 @@ num_str_tf = {'T': 0, 'F': 1}
 def gen_name(image, size):
 	try:
 		image_rot = cv2.rotate(image, cv2.ROTATE_90_COUNTERCLOCKWISE)
-		sliced_img = top.TryClass(image_rot, size,  1150, 800).process_img()[0]
+		sliced_img = top.TryClass(image_rot, size,  1150, 800).process_particular_img()[0]
 		resliced_img = cv2.resize(sliced_img, (1150, 200))
-		# cv2.imshow(f'{size}', resliced_img)
-		# cv2.waitKey(0)
-		
+
 		ret, buffer = cv2.imencode('.jpg', resliced_img)
 		result = buffer.tobytes()
-		
-		analyzed_text =cloud.text_detection(buffer)
+
 		processed_image_str = base64.b64encode(buffer).decode('utf-8')
-		# print(analyzed_text, 'analyzed_text')
+		analyzed_text ='cloud.text_detection4(buffer)'
+
 		return sliced_img, result, processed_image_str, buffer, analyzed_text
 
 	# make an error handling for connectivity issue
@@ -53,7 +51,7 @@ def gen_name(image, size):
 
 def gen_file_choose(answer=None, image=None, size=None):
 	try:
-		sliced_img = top.TryClass(image, size, 918, 1224).process_img()[0]
+		sliced_img = top.TryClass(image, size, 918, 1224).process_particular_img()[0]
 		final_img = process_answer_1.General(sliced_img, answer, questions, choices).func_choose()
 		
 		ret, buffer = cv2.imencode('.jpg', final_img[2])
@@ -70,7 +68,7 @@ def gen_file_choose(answer=None, image=None, size=None):
 
 def gen_file_m(answer=None, image=None, size=None):
 	try:
-		sliced_img = top.TryClass(image, size, 660, 660).process_img()[0]
+		sliced_img = top.TryClass(image, size, 660, 660).process_particular_img()[0]
 		final_img = process_answer_1.General(sliced_img, answer, question_m, choices_m).func_choose()
 		score = final_img[0]
 
@@ -84,7 +82,7 @@ def gen_file_m(answer=None, image=None, size=None):
 	
 def gen_file_tf(answer=None, image=None, size=None):
 	try:
-		sliced_img = top.TryClass(image, size, width_tf, height_tf).process_img()[0]
+		sliced_img = top.TryClass(image, size, width_tf, height_tf).process_particular_img()[0]
 		final_img = process_answer_1.General(sliced_img, answer, 11, 2).func_tf()
 		score = final_img[0]
 		
@@ -98,35 +96,39 @@ def gen_file_tf(answer=None, image=None, size=None):
 	
 def gen_write(image=None, size=None):
 	try:
-		sliced_img = top.TryClass(image, size,  600, 1000).process_img()[0]
+		sliced_img = top.TryClass(image, size,  600, 1000).process_particular_img()[0]
 		# cv2.imshow('ss', sliced_img)
 		# cv2.waitKey(0)
 		ret, buffer = cv2.imencode('.jpg', sliced_img)
 		
 		result = buffer.tobytes()
-		analyzed_text = cloud.text_detection(buffer)
-		# print(analyzed_text, 'write')
 		processed_image_str = base64.b64encode(buffer).decode('utf-8')
-
-		return sliced_img, result, processed_image_str, buffer, analyzed_text
+		# analyzed_text = cloud.text_detection4(buffer)
+		
+		# given_ans = analyzed_text.split(' ')
+		given_ans = ['PSEUDOPODIA', 'IDENTIFICATION', 'EXPLANATION', 'CELL', 'BOTANIST']
+		
+		return sliced_img, result, processed_image_str, buffer, given_ans
 	except Exception as es:
 		print(es, 'gen_write')
 
 def gen_code(image=None, size=None):
 	try:
-		sliced_img = top.TryClass(image, size, 600, 700).process_img()[0]
-		answer = [0, 0, 0, 0, 0, 0, 0]
-		final_img = process_answer_1.General(sliced_img, answer, question_c, choice_c).func_code()
+		sliced_img = top.TryClass(image, size, 600, 700).process_particular_img()[0]
 		# cv2.imshow('ss', sliced_img)
 		# cv2.waitKey(0)
+		answer = [0, 0, 0, 0, 0, 0, 0]
+		final_img = process_answer_1.General(sliced_img, answer, question_c, choice_c).func_code()
+
 		exam_code = ''
 	
 		for x in list(final_img):
 			exam_code+=str(x+1)
 	
 		return int(exam_code)
+
 	except Exception as es:
-		# print(es)
+		print(es, 'gen_code')
 		return es
 
 def ans_num_choose(ans):
