@@ -1,17 +1,26 @@
 import json
 
 import requests
-from thefuzz import process, fuzz
+from thefuzz import fuzz
 
 def similarity_test(ans_list, ans_given):
-  result = {}
+  result = []
   score = 0
-  for x in range(len(ans_list)):
-    similarity = fuzz.ratio(ans_list[x], ans_given[x])
-    result.update({ans_list[x]: similarity})
-    if similarity >= 75:
-      score += 1
   
+  for x in range(len(ans_given)):
+    if type(ans_given[x]) is str:
+      similarity = fuzz.ratio(ans_given[x], ans_list[x])
+      if similarity >= 75:
+        result.append(ans_given[x])
+        score += 1
+      
+    elif type(ans_given[x]) is list:
+      for y in ans_given[x]:
+        similarity = fuzz.ratio(y, ans_list[x])
+        if similarity >= 75:
+          result.append(y)
+          score += 1
+
   return result, score
 
 def text_detection4(img_data_bytes):

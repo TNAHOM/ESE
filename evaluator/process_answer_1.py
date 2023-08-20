@@ -15,7 +15,7 @@ class General:
 	
 	def func_choose(self):
 		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
+		imgThresh = cv2.threshold(imgWrapGray, 170, 250, cv2.THRESH_BINARY_INV)[1]
 		boxes = utlis.splitBoxes(imgThresh, self.questions, self.choices)
 
 		# GETTING NO ZERO PIXEL VALUES OF EACH BOX
@@ -100,7 +100,7 @@ class General:
 	
 	def func_tf(self):
 		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
+		imgThresh = cv2.threshold(imgWrapGray, 170, 250, cv2.THRESH_BINARY_INV)[1]
 		boxes = utlis.splitBoxes(imgThresh, self.questions, self.choices)
 		# GETTING NO ZERO PIXEL VALUES OF EACH BOX
 		myPixelVal = np.zeros((self.questions, self.choices))
@@ -169,7 +169,7 @@ class General:
 	
 	def func_code(self):
 		imgWrapGray = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
-		imgThresh = cv2.threshold(imgWrapGray, 137, 250, cv2.THRESH_BINARY_INV)[1]
+		imgThresh = cv2.threshold(imgWrapGray, 170, 250, cv2.THRESH_BINARY_INV)[1]
 		boxes = utlis.splitBoxes(imgThresh, self.questions, self.choices)
 		# GETTING NO ZERO PIXEL VALUES OF EACH BOX
 		myPixelVal = np.zeros((self.questions, self.choices))

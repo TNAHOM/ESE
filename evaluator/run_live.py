@@ -32,7 +32,6 @@ num_str_tf = {'T': 1, 'F':0}
 
 def shape1(number):
   cap = cv2.VideoCapture(number)
-  print(cap.isOpened())
   
   if not cap.isOpened():
     print(f"Error: Unable to open camera source {number}.")
@@ -41,8 +40,8 @@ def shape1(number):
   try:
     while True:
       success, img = cap.read()
-      # cv2.imshow('sdf', img)
-      # cv2.waitKey(0)
+      cv2.imshow('sdf', img)
+      cv2.waitKey(0)
       if not success:
         print(f"Error: Unable to read frame from camera source {number}.")
         break
