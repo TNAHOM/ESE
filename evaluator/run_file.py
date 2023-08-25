@@ -149,7 +149,7 @@ def answer_lists(exam_code_f=None, exam_code_b=None):
 			# connection = connectionToDB(exam_code_f=exam_code_f)[7]
 
 			connection = conne.ConnectionToDB(exam_code_f=exam_code_f).check_exam_f()
-			print(connection, 'connection')
+			# print(connection, 'connection')
 			if connection[6] is not None:
 				answer_list = list(to_list(connection[6]))
 				# print(answer_list)
@@ -174,7 +174,7 @@ def answer_lists(exam_code_f=None, exam_code_b=None):
 				# answer_list = (to_list_tf(connection[8]).split())
 				answer_list = multi_ans_func(connection[8])
 				answer_list_fill.extend(answer_list)
-			print(answer_list_fill, 'list ans')
+			# print(answer_list_fill, 'list ans')
 			return answer_list_fill
 	except Exception as ec:
 		print(ec, 'answer lists')

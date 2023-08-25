@@ -103,9 +103,12 @@ a{
 .mini-container .home{
   max-width: 80%;
   box-sizing: border-box;
-  text-align: center;
+  text-align: left;
 }
 
+.mini-container .home h1, .mini-container .home h4{
+  text-align: center;
+}
 .mini-container .home .file{
   display: flex;
 }
@@ -141,7 +144,7 @@ a{
 }
 
 .mini-container .home .file{
-  text-align: left;
+  text-align: ;
   width: 1000px;
 }
 
@@ -153,6 +156,17 @@ a{
   padding: 10px;
   box-sizing: border-box;
   font-size: 14px;
+}
+
+.mini-container .home .id input {
+  outline: 0;
+  width: 150px;
+  border: 0;
+  margin: 0 10px 15px;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 14px;
+  left: 0;
 }
 
 .mini-container .home .file label {
@@ -280,6 +294,7 @@ a{
   gap: 1rem;
 }
 
+.live .live_img img{
 .live .live_img img{
   width: 35%;
   aspect-ratio: 3/2;

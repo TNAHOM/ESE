@@ -111,6 +111,17 @@ class ConnectionToDB:
 		result_user = cur_user.fetchall()
 		return result_user
 	
+	def get_student_id(self, student_id):
+		cur_user = self.conn.cursor()
+		cur_student = self.conn.cursor()
+		cur_user.execute(f"SELECT * FROM base_student WHERE student_id={student_id}")
+		result_user = cur_user.fetchone()
+
+		if result_user is not None:
+			cur_student.execute(f"SELECT * FROM base_user WHERE id='{result_user[0]}'")
+			result_student = cur_student.fetchone()
+			return result_student
+	
 	
 	def upload_result(self, score, student_id, subject_id, wrong_ans=None, wrong_que=None, disqualified_ans=None,
 	                  disqualified_que=None):
