@@ -3,6 +3,7 @@ from main.models import User
 from main.forms import RegisterForm, LoginForm
 from flask_login import login_user, logout_user, login_required, current_user
 from . import db
+from evaluator.cloud import create_folder, search_file
 
 views = Blueprint('views', __name__)
 
@@ -34,6 +35,7 @@ def register():
 			)
 			db.session.add(new_user)
 			db.session.commit()
+			create_folder(form.email.data)
 			
 			flash(f'Account created successfully!! {new_user.username}', category='success')
 			return redirect(url_for(f'views.{(current_user.role).lower()}'))

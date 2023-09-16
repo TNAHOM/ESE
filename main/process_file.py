@@ -2,35 +2,21 @@ from flask import render_template, redirect, url_for, flash, request, Blueprint
 from evaluator import run_folder, run_file, cloud, connection
 from flask_login import login_required, current_user
 import os, cv2
-import datetime
+from io import BytesIO
 
 
 process_file = Blueprint('process_file', __name__)
-
-class AllInOneFolder:
-  def __init__(self, image=None, qrcode=None):
-    self.qrcode = qrcode
-    self.answer_folder = run_folder.final_ans(self.qrcode)
-    self.image = image
-  
-  def folder(self):
-    gen = run_folder.gen_folder(self.answer_folder[0], self.image)
-    return gen, self.answer_folder[0]
-  
-  def folder_2(self):
-    gen = run_folder.gen_folder_2(self.answer_folder[0], self.image)
-    return gen, self.answer_folder[0]
-
 @process_file.route('/evaluate-exam', methods=['GET', 'POST'])
 @login_required
 def upload_file():
-  try:
+  # try:
     if request.method=='POST':
       directory = request.form.get('file')
       student_id = request.form.get('student_id')
       file_name = request.files['file'].filename
-      
+      upload_file = request.files['file']
       full_path = directory+'\\'+file_name
+    
       if file_name[-4:] == 'jpeg' or '.jpg' or '.png':
         img = cv2.imread(full_path)
         exam_code = run_file.gen_code(img, 4)
@@ -43,6 +29,9 @@ def upload_file():
             check_exam_b = exam_b.check_exam_b()
             if check_exam_b is not None:
               student_name = connection.ConnectionToDB().get_student_id(student_id)
+              exam_name = f"{student_name[10]} {check_exam_b[4]} -B"
+              school_folder_id = cloud.search_file(current_user.email)
+              
               if student_name is not None:
                 exam_exist = connection.ConnectionToDB(name_id=student_name[9]).exam_exist(check_exam_b[0])
   
@@ -57,10 +46,15 @@ def upload_file():
   
                 if exam_exist is None:
                   connection.ConnectionToDB(exam_code_b=exam_code).upload_result(result[1], student_name[9], check_exam_b[0])
+
+                  # UPLOAD EXAM IMAGE TO GOOGLE DRIVE
+                  cloud.upload_exam(full_path, exam_name, upload_file, school_folder_id[1])
+                  
                   flash(f'{student_name[10]} exam has been registered successfully', category='success')
+                  
                 else:
                   get_exam_b = connection.ConnectionToDB(name_id=student_name[9], exam_code_b=exam_code, name=student_name[10])
-                  run = get_exam_b.get_exam_b(result[1], check_exam_b)
+                  run = get_exam_b.get_exam_b(result[1], check_exam_b, full_path, exam_name, upload_file, school_folder_id[1])
     
                   flash(run, category='danger')
                 return render_template('show result.html', name=student_name[10], display=display, img=response[2],
@@ -129,16 +123,22 @@ def upload_file():
               if final_answer[2] is not None:
                 display_img.append(all_together_m[2])
                 score += all_together_m[1]
-  
+
+                exam_name = f"{student_name[10]} {check_exam_f[4]} -F"
+                school_folder_id = cloud.search_file(current_user.email)
+
                 if exam_exist is None:
                   connection.ConnectionToDB(exam_code_f=exam_code).upload_result(int(score), student_name[9], check_exam_f[0],
                     str(incorrect_ans), str(incorrect_que), str(disqualified_ans[0]), str(disqualified_que))
+
+                  # UPLOAD EXAM IMAGE TO GOOGLE DRIVE
+                  cloud.upload_exam(full_path, exam_name, upload_file, school_folder_id[1])
+                  
                   flash(f'{student_name[10]} exam has been registered successfully', category='success')
-  
+
                 else:
-    
                   get_exam_f = connection.ConnectionToDB(name_id=student_name[9], exam_code_f=exam_code, name=student_name[10])
-                  run = get_exam_f.get_exam_f(score, check_exam_f)
+                  run = get_exam_f.get_exam_f(score, check_exam_f, full_path, exam_name, upload_file, school_folder_id[1])
     
                   flash(run, category='danger')
   
@@ -157,10 +157,9 @@ def upload_file():
         flash('Their is no image detected with the extension *.jpg, *.png, *.jpeg', category='danger')
         return redirect(url_for('process_file.upload_file'))
     elif request.method == 'GET':
-      
       return render_template('upload file.html')
-  except Exception as ec:
-    print(ec, 'ec')
-    flash(f'Error: {ec}', category='danger')
-    return redirect(url_for('process_file.upload_file'))
+  # except Exception as ec:
+  #   print(ec, 'ec')
+  #   flash(f'Error: {ec}', category='danger')
+  #   return redirect(url_for('process_file.upload_file'))
 
